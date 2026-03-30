@@ -1175,9 +1175,7 @@
       
      if (pesoTexto) {
   let txt = `Peso por unidad: <strong>${pesoUni}kg</strong>`;
-  if (p.precioUnidad > 0) {
-    txt += ` | Precio por unidad definido: ${formatearCLP(p.precioUnidad)}`;
-  }
+  // Ya no muestra precio calculado automáticamente
         if (tieneStockKilo && tieneStockGranel) {
           txt += ` | Stock: ${stockKilos}kg / ${stockGranel}u`;
         } else if (tieneStockKilo) {
@@ -1188,7 +1186,7 @@
         pesoTexto.innerHTML = txt;
       }
       
-      // Solo mostrar precios que fueron ingresados manualmente
+// Solo mostrar precios que fueron ingresados manualmente
 precios.innerHTML = `
   ${p.precioKilo > 0 ? `<span class="price-tag price-kilo">${formatearCLP(p.precioKilo)}/kg</span>` : ''}
   ${p.precioUnidad > 0 ? `<span class="price-tag price-unit">${formatearCLP(p.precioUnidad)}/u</span>` : ''}
@@ -1259,24 +1257,15 @@ precios.innerHTML = `
     };
 
     // ========== ACTUALIZAR PREVIEW DE PRECIO EN FORMULARIO ==========
-    function actualizarPreviewPrecio() {
-      const precioKg = parseFloat(document.getElementById('pPreKg')?.value) || 0;
-      const pesoUni = parseFloat(document.getElementById('pPesoUni')?.value) || 0.4;
-      const preview = document.getElementById('precioCalcPreview');
-      const valor = document.getElementById('precioAproxCalculado');
-      const pesoMostrado = document.getElementById('pesoMostrado');
-      const precioKgMostrado = document.getElementById('precioKgMostrado');
-      
-      if (precioKg > 0 && pesoUni > 0) {
-        const precioAprox = calcularPrecioAproxUnidad(precioKg, pesoUni);
-        valor.textContent = formatearCLP(precioAprox);
-        pesoMostrado.textContent = pesoUni;
-        precioKgMostrado.textContent = precioKg;
-        preview.style.display = 'block';
-      } else {
-        preview.style.display = 'none';
-      }
-    }
+  // ========== ACTUALIZAR PREVIEW DE PRECIO EN FORMULARIO ==========
+function actualizarPreviewPrecio() {
+  // Ya no calcula precio por unidad automáticamente
+  // El precio por unidad debe ingresarse manualmente o dejarse vacío
+  const preview = document.getElementById('precioCalcPreview');
+  if (preview) {
+    preview.style.display = 'none';
+  }
+}
 
     // ========== MANEJO DE FOTOS ==========
     window.handleFotoSeleccionada = (input) => {
@@ -1761,6 +1750,7 @@ precios.innerHTML = `
       
       let html = '';
 // Solo mostrar modo de compra si hay precio por kilo O precio por unidad EXPLÍCITO (manual)
+// Solo mostrar modo de compra si hay precio por kilo O precio por unidad EXPLÍCITO (manual)
 const tienePrecioUnidadManual = p.precioUnidad > 0;
 
 if (tienePrecioKilo || tienePrecioUnidadManual) {
@@ -1771,6 +1761,7 @@ if (tienePrecioKilo || tienePrecioUnidadManual) {
       ${tienePrecioUnidadManual ? `<button type="button" class="option-btn ${(!tienePrecioKilo || !tieneStockKilo) ? 'active' : ''}" data-modo="unidad" onclick="selectModo('unidad')">📦 Por unidad ${formatearCLP(p.precioUnidad)}/u</button>` : ''}
     </div>
   </div>`;
+}
 }
       
       html += `<div>
@@ -2209,11 +2200,10 @@ const tienePrecioUnidadManual = p.precioUnidad > 0;
               </span>
               <h3>${p.nombre || 'Sin nombre'}</h3>
               ${p.desc ? `<div class="card-desc">${p.desc}</div>` : ''}
-             <div class="precio-tag">
+           <div class="precio-tag">
   ${p.precioKilo > 0 ? `${formatearCLP(p.precioKilo)}/kg ` : ''}
   ${p.precioUnidad > 0 ? `${formatearCLP(p.precioUnidad)}/u` : ''}
 </div>
-${tienePrecioUnidadManual ? `<div class="precio-aprox">Precio por unidad: ${formatearCLP(p.precioUnidad)}</div>` : ''}
               <button class="btn-add" ${sinStock || modoEliminar ? 'disabled' : ''} onclick="event.stopPropagation(); abrirVariantes('${p.id}')">
                 ${modoEliminar ? 'TOCA PARA ELIMINAR' : sinStock ? 'AGOTADO' : 'AGREGAR 🛒'}
               </button>
@@ -2232,17 +2222,7 @@ ${tienePrecioUnidadManual ? `<div class="precio-aprox">Precio por unidad: ${form
       
       renderLote(0);
     }
-function copiarPrecio() {
-    const precioKg = parseFloat(document.getElementById('pPreKg')?.value) || 0;
-    const pesoUni = parseFloat(document.getElementById('pPesoUni')?.value) || 0.4;
-    
-    if (precioKg > 0 && pesoUni > 0) {
-        const precioUnidad = Math.round(precioKg * pesoUni);
-        document.getElementById("pPreUni").value = precioUnidad;
-    }
-}
 
-setInterval(copiarPrecio, 100);
     function renderGaleria() {
       const cont = document.getElementById('galeriaSuperior');
       if (!cont) return;
