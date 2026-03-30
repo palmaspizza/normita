@@ -1,0 +1,2211 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>🥬 NORMITA | Verdulería</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #1a5f2a;
+      --primary-light: #2d8a3e;
+      --accent: #ff6b35;
+      --accent-yellow: #ffd23f;
+      --success: #00c853;
+      --danger: #ff1744;
+      --bg-cream: #fef9e7;
+    }
+
+    * { 
+      box-sizing: border-box; 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body { 
+      background: var(--bg-cream);
+      min-height: 100vh;
+      padding-top: 140px;
+    }
+
+    .header-fixed { 
+      position: fixed; 
+      top: 0; 
+      left: 0; 
+      right: 0; 
+      z-index: 1000; 
+      background: var(--primary);
+      padding: 15px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+
+    .nav-top { 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .logo { 
+      font-size: 1.8rem; 
+      font-weight: 800; 
+      color: white; 
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .logo::before { content: '🥬'; font-size: 2rem; }
+
+    .nav-icons { 
+      display: flex; 
+      gap: 15px; 
+    }
+
+    .icon-btn { 
+      background: rgba(255,255,255,0.2);
+      border: 2px solid white;
+      color: white; 
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      font-size: 1.2rem;
+      cursor: pointer;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .badge { 
+      position: absolute; 
+      top: -5px; 
+      right: -5px; 
+      background: var(--danger); 
+      font-size: 0.75rem; 
+      font-weight: 800;
+      padding: 3px 7px; 
+      border-radius: 15px;
+      border: 2px solid white;
+    }
+
+    .top-bar { 
+      display: flex; 
+      flex-direction: column;
+      gap: 10px; 
+    }
+
+    .search-input { 
+      width: 100%;
+      padding: 12px 15px 12px 40px; 
+      border-radius: 25px; 
+      border: none;
+      font-size: 1rem;
+      background: white;
+    }
+
+    .search-container { position: relative; }
+    .search-icon {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--primary);
+    }
+
+    .filters { 
+      display: flex; 
+      gap: 8px; 
+      overflow-x: auto;
+      padding-bottom: 5px;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .filter-btn { 
+      padding: 8px 16px; 
+      border-radius: 20px; 
+      border: none;
+      background: white;
+      color: var(--primary);
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .filter-btn.active { 
+      background: var(--accent-yellow);
+      color: var(--primary);
+    }
+
+    .gallery-wrap { 
+      background: var(--primary);
+      padding: 20px 15px;
+      margin-top: 0;
+    }
+
+    .gallery { 
+      display: flex; 
+      gap: 12px; 
+      overflow-x: auto;
+      padding: 5px;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .gallery-item { 
+      flex: 0 0 auto; 
+      width: 140px; 
+      height: 100px; 
+      border-radius: 12px; 
+      overflow: hidden;
+      border: 3px solid white;
+      position: relative;
+      background: #ddd;
+    }
+
+    .gallery-item img { 
+      width: 100%; 
+      height: 100%; 
+      object-fit: cover;
+    }
+
+    .gallery-delete { 
+      position: absolute; 
+      top: 5px; 
+      right: 5px; 
+      width: 28px; 
+      height: 28px; 
+      border-radius: 50%; 
+      border: none; 
+      background: var(--danger); 
+      color: white; 
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container { 
+      max-width: 1200px; 
+      margin: 0 auto; 
+      padding: 20px 15px;
+    }
+
+    .grid { 
+      display: grid; 
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); 
+      gap: 15px; 
+    }
+
+    .card { 
+      background: white; 
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card-img { 
+      height: 140px; 
+      background: #f1f8e9;
+      display: flex; 
+      align-items: center; 
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card-img img { 
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .card-info { 
+      padding: 12px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .stock-badge { 
+      display: inline-flex; 
+      align-items: center; 
+      gap: 5px; 
+      padding: 4px 10px; 
+      border-radius: 12px; 
+      font-size: 0.7rem; 
+      font-weight: 700;
+      margin-bottom: 8px;
+      width: fit-content;
+    }
+
+    .stock-badge-ok { background: #c8e6c9; color: #1b5e20; }
+    .stock-badge-low { background: #fff3e0; color: #e65100; }
+    .stock-badge-out { background: #ffcdd2; color: #b71c1c; }
+
+    .card h3 {
+      font-size: 0.95rem;
+      color: var(--primary);
+      margin-bottom: 6px;
+      line-height: 1.2;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .card-desc {
+      font-size: 0.75rem;
+      color: #666;
+      margin-bottom: 8px;
+      line-height: 1.3;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .precio-tag {
+      font-size: 0.9rem;
+      font-weight: 800;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+
+    .precio-aprox {
+      font-size: 0.75rem;
+      color: #666;
+      font-weight: 600;
+      margin-bottom: 8px;
+      background: #f5f5f5;
+      padding: 4px 8px;
+      border-radius: 8px;
+      display: inline-block;
+    }
+
+    .btn-add { 
+      width: 100%; 
+      padding: 10px; 
+      background: var(--accent);
+      color: white; 
+      border: none; 
+      border-radius: 10px; 
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      margin-top: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .btn-add[disabled] { 
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    .admin-btns { 
+      position: absolute; 
+      top: 8px; 
+      right: 8px; 
+      display: flex; 
+      gap: 6px; 
+      z-index: 10;
+    }
+
+    .admin-btn { 
+      width: 32px;
+      height: 32px;
+      background: var(--success);
+      color: white; 
+      border: none; 
+      border-radius: 8px; 
+      cursor: pointer;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .admin-btn.delete { background: var(--danger); }
+
+    .modal { 
+      display: none; 
+      position: fixed; 
+      inset: 0; 
+      background: rgba(0,0,0,0.8); 
+      z-index: 2000; 
+      align-items: center; 
+      justify-content: center; 
+      padding: 15px;
+    }
+
+    .modal-content { 
+      background: white; 
+      border-radius: 20px; 
+      width: 100%; 
+      max-width: 500px; 
+      max-height: 90vh; 
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      background: var(--primary);
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .modal-header h2, .modal-header h3 {
+      font-size: 1.3rem;
+      margin: 0;
+    }
+
+    .modal-body {
+      padding: 20px;
+    }
+
+    .form-grid { 
+      display: grid; 
+      grid-template-columns: 1fr 1fr; 
+      gap: 12px; 
+    }
+
+    .full-width { grid-column: span 2; }
+
+    input, select, textarea { 
+      width: 100%; 
+      padding: 12px; 
+      border: 2px solid #e0e0e0; 
+      border-radius: 10px; 
+      font-size: 1rem;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--accent-yellow);
+    }
+
+    label { 
+      font-size: 0.8rem; 
+      font-weight: 700;
+      color: var(--primary); 
+      margin-bottom: 5px;
+      display: block;
+    }
+
+    .option-group { margin: 15px 0; }
+
+    .option-btn { 
+      padding: 10px 16px; 
+      border: 2px solid #e0e0e0; 
+      border-radius: 20px; 
+      background: white;
+      margin: 3px;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+
+    .option-btn.active { 
+      background: var(--accent-yellow);
+      border-color: var(--accent-yellow);
+      color: var(--primary);
+    }
+
+    .foto-botones {
+      display: flex;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .btn-foto {
+      flex: 1;
+      padding: 12px;
+      border: 2px dashed var(--primary);
+      border-radius: 12px;
+      background: #f5f5f5;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+    }
+
+    .btn-foto:hover {
+      background: #e8f5e9;
+      border-style: solid;
+    }
+
+    .btn-foto i {
+      font-size: 1.5rem;
+      color: var(--primary);
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .btn-foto span {
+      font-size: 0.8rem;
+      color: #666;
+      font-weight: 600;
+    }
+
+    .preview-foto {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 12px;
+      margin-top: 10px;
+      display: none;
+      border: 3px solid var(--accent-yellow);
+    }
+
+    .cart-item { 
+      display: grid; 
+      grid-template-columns: 70px 1fr 110px; 
+      gap: 12px; 
+      padding: 15px; 
+      border-bottom: 1px solid #eee;
+      align-items: center;
+    }
+
+    .cart-img-min { 
+      width: 70px; 
+      height: 70px; 
+      object-fit: cover; 
+      border-radius: 10px;
+    }
+
+    .qty-controls { 
+      display: flex; 
+      align-items: center; 
+      gap: 8px; 
+      background: #f5f5f5; 
+      padding: 5px; 
+      border-radius: 8px;
+    }
+
+    .btn-qty { 
+      width: 30px; 
+      height: 30px; 
+      border: none; 
+      background: var(--primary); 
+      color: white; 
+      border-radius: 6px; 
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 700;
+    }
+    input{
+       box-shadow: rgb(53, 12, 12) 4px 4px 4px;
+    }
+    .qty-input { 
+      width: 40px; 
+      text-align: center; 
+      border: none; 
+      background: transparent; 
+      font-weight: 700;
+      padding: 0;
+    }
+    button{
+       box-shadow: rgb(56, 14, 14) 2px 2px 2px;
+       border: 1px solid black;
+    }
+    .btn-delete-item { 
+      color: var(--danger); 
+      background: none; 
+      border: none; 
+      cursor: pointer; 
+      font-size: 0.8rem;
+      margin-top: 5px;
+    }
+
+    .cart-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+      background: #f5f5f5;
+      border-radius: 15px;
+      margin: 20px 0;
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    #loader { 
+      position: fixed; 
+      inset: 0; 
+      background: var(--primary);
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      z-index: 3000; 
+      flex-direction: column;
+      color: white;
+    }
+
+    .loader-text {
+      font-size: 1.2rem;
+      margin-top: 20px;
+    }
+
+    #happy-cart { 
+      position: fixed; 
+      bottom: -100px; 
+      left: 50%; 
+      transform: translateX(-50%); 
+      z-index: 3000; 
+      background: white;
+      padding: 20px 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      border: 3px solid var(--success);
+      transition: 0.3s;
+      text-align: center;
+    }
+
+    #happy-cart.active { bottom: 30px; }
+
+    .modo-eliminar-activo {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: var(--danger);
+      color: white;
+      text-align: center;
+      padding: 10px;
+      z-index: 9999;
+      font-weight: 700;
+      animation: pulse 1s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.8; }
+    }
+
+    @media (min-width: 768px) {
+      .grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+      .card-img { height: 160px; }
+    }
+
+    @media (max-width: 380px) {
+      .grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+      .card h3 { font-size: 0.85rem; }
+    }
+
+    .card, .gallery-item {
+      will-change: transform;
+      contain: layout style paint;
+    }
+
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #f1f1f1; }
+    ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 3px; }
+    
+    .card-img-clickable {
+      cursor: zoom-in !important;
+      position: relative;
+    }
+
+    .card-img-clickable:active {
+      opacity: 0.9;
+    }
+
+    .zoom-hint {
+      position: absolute;
+      bottom: 8px;
+      right: 8px;
+      background: rgba(0,0,0,0.6);
+      color: white;
+      padding: 5px 10px;
+      border-radius: 15px;
+      font-size: 0.75rem;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    #modalFoto {
+      background: rgba(0,0,0,0.95);
+      backdrop-filter: blur(10px);
+      z-index: 5000;
+    }
+
+    #modalFoto > div {
+      position: relative;
+      width: 95vw;
+      height: 95vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #fotoAmpliada {
+      max-width: 95vw;
+      max-height: 95vh;
+      object-fit: contain;
+      border-radius: 10px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+
+    .btn-cerrar-foto {
+      position: absolute;
+      top: -50px;
+      right: 0;
+      background: white;
+      border: none;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      font-size: 1.5rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      z-index: 10;
+    }
+
+    /* Estilos para info de peso en modal */
+    .peso-info {
+      background: #e8f5e9;
+      padding: 10px;
+      border-radius: 8px;
+      margin: 10px 0;
+      font-size: 0.85rem;
+      color: var(--primary);
+    }
+
+    .precio-calc-preview {
+      background: var(--accent-yellow);
+      padding: 15px;
+      border-radius: 10px;
+      margin: 15px 0;
+      text-align: center;
+    }
+
+    .precio-calc-preview .label {
+      font-size: 0.8rem;
+      color: #666;
+      margin-bottom: 5px;
+    }
+
+    .precio-calc-preview .valor {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--primary);
+    }
+  </style>
+</head>
+<body>
+  <!-- Modal Foto Ampliada -->
+  <div class="modal" id="modalFoto" onclick="cerrarModal('modalFoto')">
+    <div>
+      <img id="fotoAmpliada" src="" alt="Producto">
+      <button class="btn-cerrar-foto" onclick="event.stopPropagation(); cerrarModal('modalFoto')">✕</button>
+    </div>
+  </div>
+
+  <!-- Loader -->
+  <div id="loader">
+    <div style="font-size: 3rem;">🥬</div>
+    <div class="loader-text">Cargando...</div>
+  </div>
+
+  <!-- Happy Cart -->
+  <div id="happy-cart">
+    <div style="font-weight: 700; color: var(--primary); margin-top: 5px;">¡Agregado!</div>
+  </div>
+
+  <!-- Modo Eliminar Banner -->
+  <div id="modoEliminarBanner" class="modo-eliminar-activo" style="display: none;">
+    🗑️ MODO ELIMINAR ACTIVO - Toca un producto para eliminarlo
+    <button onclick="desactivarModoEliminar()" style="margin-left: 10px; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">CERRAR</button>
+  </div>
+
+  <!-- Header -->
+  <header class="header-fixed">
+    <div class="nav-top">
+      <a href="#" class="logo">NORMITA</a>
+      <div class="nav-icons">
+        <button class="icon-btn" onclick="abrirModal('modalClave')" title="Admin">
+          <i class="fas fa-tools"></i>
+        </button>
+        <button class="icon-btn" onclick="abrirModal('modalCarrito')" title="Carrito">
+          <i class="fas fa-shopping-basket"></i>
+          <span class="badge" id="cartCount">0</span>
+        </button>
+      </div>
+    </div>
+    <div class="top-bar">
+      <div class="search-container">
+        <i class="fas fa-search search-icon"></i>
+        <input id="searchInput" class="search-input" type="text" placeholder="Buscar productos...">
+      </div>
+      <div class="filters">
+        <button class="filter-btn active" data-cat="all">Todos</button>
+        <button class="filter-btn" data-cat="Frutas">🍎 Frutas</button>
+        <button class="filter-btn" data-cat="Verduras">🥦 Verduras</button>
+        <button class="filter-btn" data-cat="Hierbas">🌿 Hierbas</button>
+        <button class="filter-btn" data-cat="Orgánico">🌱 Orgánico</button>
+        <button class="filter-btn" data-cat="Combos">🎁 Combos</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Galería -->
+  <div class="gallery-wrap" id="galeriaWrap">
+    <div class="gallery" id="galeriaSuperior"></div>
+  </div>
+
+  <!-- Productos -->
+  <div class="container">
+    <div class="grid" id="listaProductos"></div>
+  </div>
+
+  <!-- Modal Carrito -->
+  <div class="modal" id="modalCarrito">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>🥬 Mi Canasta</h2>
+      </div>
+      <div class="modal-body">
+        <div id="cartList"></div>
+        <div style="margin: 15px 0;">
+          <label>Forma de pago</label>
+          <select id="payMethod">
+            <option value="">Seleccionar</option>
+            <option value="transferencia">🏦 Transferencia</option>
+            <option value="tarjeta">💳 Tarjeta</option>
+            <option value="efectivo">💵 Efectivo</option>
+          </select>
+        </div>
+        <div style="margin-bottom: 15px;">
+          <label>Tu nombre</label>
+          <input id="customerName" type="text" placeholder="Nombre completo">
+        </div>
+        <div class="cart-total">
+          <span>TOTAL:</span>
+          <span id="cartTotal">$0</span>
+        </div>
+        <button id="whatsappBtn" class="btn-add" style="background: #25d366; font-size: 1rem;" onclick="enviarWhatsApp()" disabled>
+          <i class="fab fa-whatsapp"></i> ENVIAR WHATSAPP
+        </button>
+        <button class="btn-add" style="background: #78909c; margin-top: 10px;" onclick="cerrarModal('modalCarrito')">
+          Seguir comprando
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Producto (Admin) -->
+  <div class="modal" id="modalProd">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modalProdTitle">🥦 Nuevo Producto</h3>
+        <button class="btn-add" style="background: #ff6b6b; color: white; margin-top: 15px; box-shadow: brown 4px 4px 4px;" onclick="activarModoEliminarDesdeModal();desactivarModoEliminar()">
+          <span style="background-color: rgb(255, 0, 0); padding: 5px; border-radius: 5px; border: 2px solid white;">🗑️</span> EDITAR O ELIMINAR PRODUCTOS <span style=" border: 2px solid white; background-color: #00c853; padding: 5px; border-radius: 5px;">✏️</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="pId">
+        <div class="form-grid">
+          <div class="full-width">
+            <label>Nombre *</label>
+            <input type="text" id="pNom" placeholder="Ej: Manzana Roja" required>
+          </div>
+          <div>
+            <label>Categoría</label>
+            <select style="border: 2px solid red;" id="pCat">
+              <option>Frutas</option>
+              <option>Verduras</option>
+              <option>Hierbas</option>
+              <option>Orgánico</option>
+              <option>Combos</option>
+            </select>
+          </div>
+          <div><br><br><br><br>
+            <label>Stock (kg) (opcional)</label>
+            <input type="number" id="pStockKg" placeholder="0" step="0.01" min="0">
+          </div>
+          <div>
+            <label>Stock (a granel) (opcional)</label>
+            <input type="number" id="pStockGranel" placeholder="0" step="1" min="0">
+          </div>
+          <div>
+            <label>Peso promedio por unidad (kg)</label>
+            <input type="number" id="pPesoUni" step="0.01" min="0.01" placeholder="0.4" value="0.4">
+          </div>
+          <div>
+            <label>Precio kilo ($) (opcional)</label>
+            <input type="number" id="pPreKg" step="1" placeholder="0">
+          </div>
+          <div>
+            <label>Precio unidad ($) (opcional)</label>
+            <input type="number" id="pPreUni" step="1" placeholder="0">
+          </div>
+          
+          <!-- Preview de cálculo de precio aproximado -->
+          <div class="full-width">
+            <div class="precio-calc-preview" id="precioCalcPreview" style="display: none;">
+              <div class="label">💡 Precio aproximado por unidad</div>
+              <div class="valor" id="precioAproxCalculado">$0</div>
+              <div style="font-size: 0.75rem; color: #666; margin-top: 5px;">
+                Basado en <span id="pesoMostrado">0.4</span>kg × $<span id="precioKgMostrado">0</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="full-width">
+            <label>📷 Foto del producto</label>
+            <div class="foto-botones">
+              <div class="btn-foto" onclick="document.getElementById('pImgCamara').click()">
+                <i class="fas fa-camera"></i>
+                <span>CÁMARA</span>
+              </div>
+              <div class="btn-foto" onclick="document.getElementById('pImgGaleria').click()">
+                <i class="fas fa-images"></i>
+                <span>GALERÍA</span>
+              </div>
+            </div>
+            <input type="file" id="pImgCamara" accept="image/*" capture="environment" style="display: none;" onchange="handleFotoSeleccionada(this)">
+            <input type="file" id="pImgGaleria" accept="image/*" style="display: none;" onchange="handleFotoSeleccionada(this)">
+            
+            <img id="previewFoto" class="preview-foto" alt="Preview">
+            <button type="button" id="btnQuitarFoto" class="btn-add" style="background: var(--danger); margin-top: 10px; display: none; font-size: 0.8rem;" onclick="quitarFoto()">
+              ❌ Quitar foto
+            </button>
+          </div>
+
+          <div class="full-width" style="display: none;">
+            <label>🖼️ Galería destacada</label>
+            <input type="file" id="gImg" accept="image/*" onchange="handleFotoGaleria(this)">
+          </div>
+
+          <div class="full-width">
+            <label>Descripción</label>
+            <textarea id="pDesc" rows="2" placeholder="Descripción ..."></textarea>
+          </div>
+        </div>
+        <script>
+          function recargarPagina() {
+  location.reload();
+}
+
+        </script>
+        <button class="btn-add" style="margin-top: 15px;" onclick="guardar();recargarPagina();" id="btnGuardar">
+          💾 GUARDAR PRODUCTO
+        </button>
+        <button class="btn-add" style="background: #e0e0e0; color: #666; margin-top: 10px;" onclick="cerrarModal('modalProd')">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Clave -->
+  <div class="modal" id="modalClave">
+    <div class="modal-content" style="max-width: 320px;">
+      <div class="modal-header">
+        <h3>🔐 Acceso Admin</h3>
+      </div>
+      <div class="modal-body" style="text-align: center;">
+        <input type="password" id="passInput" placeholder="••••" style="text-align: center; font-size: 1.5rem; letter-spacing: 8px; margin-bottom: 20px;">
+        <button class="btn-add" onclick="login()">
+          Ingresar
+        </button>
+        <button class="btn-add" style="background: #e0e0e0; color: #666; margin-top: 10px;" onclick="cerrarModal('modalClave')">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Confirmar -->
+  <div class="modal" id="modalConfirm">
+    <div class="modal-content" style="max-width: 320px;">
+      <div class="modal-body" style="text-align: center; padding: 30px;">
+        <div style="font-size: 3rem; margin-bottom: 15px;">⚠️</div>
+        <p id="confirmMessage" style="margin-bottom: 20px; font-weight: 600;">¿Confirmar?</p>
+        <button class="btn-add" id="btnConfirmarSi">
+          ✅ Sí
+        </button>
+        <button class="btn-add" style="background: #e0e0e0; color: #666; margin-top: 10px;" onclick="cerrarModal('modalConfirm')">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Variantes -->
+  <div class="modal" id="modalVariantes">
+    <div class="modal-content">
+      <div class="modal-header" style="background: var(--accent-yellow); color: var(--primary);">
+        <h3 id="varTitle">Seleccionar</h3>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="varProdId">
+        
+        <!-- Info de peso para el cliente -->
+        <div class="peso-info" id="pesoInfoCliente" style="display: none;">
+          <i class="fas fa-info-circle"></i>
+          <span id="textoPesoInfo"></span>
+        </div>
+
+        <div id="varOptions"></div>
+        
+        <!-- Preview de cálculo en tiempo real -->
+        <div class="precio-calc-preview" id="previewCalculoVariante" style="display: none;">
+          <div class="label">Total estimado</div>
+          <div class="valor" id="totalEstimadoVariante">$0</div>
+        </div>
+
+        <button class="btn-add" style="margin-top: 20px;" onclick="confirmarVariantes()">
+          ✅ Agregar al carrito
+        </button>
+        <button class="btn-add" style="background: #e0e0e0; color: #666; margin-top: 10px;" onclick="cerrarModal('modalVariantes')">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Producto Grande -->
+  <div class="modal" id="modalProductoGrande">
+    <div class="modal-content" style="width: 98vw; max-width: 1200px; max-height: 95vh;">
+     <br> <button class="btn-add" id="btnProductoAgregar">AGREGAR 🛒</button>
+          <button class="btn-add" style="background:#e0e0e0; color:#666; margin-top:10px" onclick="cerrarModal('modalProductoGrande')">Cancelar</button>
+         <div class="modal-body" style="display: flex; flex-direction: column; gap: 16px; align-items: center;">
+        <img id="productoImg" src="https://via.placeholder.com/400" alt="Producto" style="width: 100%; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);" onerror="this.src='https://via.placeholder.com/400'">
+        <div style="width: 100%; max-width: 900px;">
+          <input type="hidden" id="productoId">
+          <h3 id="productoNombre" style="margin:0 0 8px; color: var(--primary); font-size: 1.6rem; font-weight: 800;"></h3>
+          <div id="productoStock" class="stock-badge" style="margin-bottom: 10px;"></div>
+          
+          <!-- Info de peso en vista detallada -->
+          <div class="peso-info" id="productoPesoInfo" style="margin-bottom: 12px;">
+            <i class="fas fa-weight"></i> <span id="productoPesoTexto"></span>
+          </div>
+
+          <div id="productoPrecios" style="font-size:1.2rem; font-weight:900; margin-bottom:12px; display:flex; gap:10px; flex-wrap:wrap"></div>
+          <div id="productoDesc" style="font-size:0.95rem; color:#444; line-height:1.5; margin-bottom: 16px;"></div>
+         </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getDatabase, ref, push, set, remove, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+    import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCuHSlv7WEmoEWh96rWWCnTi7AwgN-7Hd4",
+      authDomain: "tatuajes-e7c8f.firebaseapp.com",
+      databaseURL: "https://tatuajes-e7c8f-default-rtdb.firebaseio.com",
+      projectId: "tatuajes-e7c8f",
+      storageBucket: "tatuajes-e7c8f.firebasestorage.app",
+      messagingSenderId: "667800230522",
+      appId: "1:667800230522:web:1c7f3a49fc5323ba61f9c3"
+    };
+
+    // ========== VARIABLES GLOBALES ==========
+    let app, db, dbRef, galeriaRef;
+    let productos = [];
+    let galeria = [];
+    let carrito = [];
+    let isAdmin = false;
+    let modoEliminar = false;
+    let accionPendiente = null;
+    let filtroTexto = '';
+    let filtroCategoria = 'all';
+    let firebaseOk = false;
+    let datosCargados = false;
+    let fotoTemporal = null;
+    let guardando = false;
+
+    // ========== FORMATEO CLP ==========
+    const formatearCLP = (valor) => {
+      if (!valor || valor === 0) return '$0';
+      return '$' + Math.round(valor).toLocaleString('es-CL');
+    };
+
+    // ========== CÁLCULO DE PRECIO APROXIMADO POR UNIDAD ==========
+    const calcularPrecioAproxUnidad = (precioKilo, pesoUnidad) => {
+      if (!precioKilo || !pesoUnidad) return 0;
+      return Math.round(precioKilo * pesoUnidad);
+    };
+
+    // ========== CONVERSIÓN DE UNIDADES A KG ==========
+    const unidadesAKilos = (cantidadUnidades, pesoUnidad) => {
+      return cantidadUnidades * (pesoUnidad || 0.4);
+    };
+
+    // ========== FUNCIÓN AMPLIAR FOTO ==========
+    window.ampliarFoto = (url, nombre) => {
+      const img = document.getElementById('fotoAmpliada');
+      if (img) {
+        img.src = url;
+        img.alt = nombre || 'Producto';
+        abrirModal('modalFoto');
+      }
+    };
+
+    window.abrirProductoGrande = (id) => {
+      const p = productos.find(x => x.id === id);
+      if (!p) return;
+      const img = document.getElementById('productoImg');
+      const nom = document.getElementById('productoNombre');
+      const desc = document.getElementById('productoDesc');
+      const precios = document.getElementById('productoPrecios');
+      const stock = document.getElementById('productoStock');
+      const hid = document.getElementById('productoId');
+      const btn = document.getElementById('btnProductoAgregar');
+      const pesoInfo = document.getElementById('productoPesoInfo');
+      const pesoTexto = document.getElementById('productoPesoTexto');
+      
+      if (!img || !nom || !desc || !precios || !stock || !hid || !btn) return;
+      
+      img.src = p.foto || 'https://via.placeholder.com/400';
+      img.alt = p.nombre || 'Producto';
+      nom.textContent = p.nombre || 'Sin nombre';
+      desc.textContent = p.desc || '';
+      
+      // Mostrar info de peso
+      const pesoUni = p.pesoUnidad || 0.4;
+      const tieneStockKilo = p.stockKilos !== null && p.stockKilos !== undefined;
+      const tieneStockGranel = p.stockGranel !== null && p.stockGranel !== undefined;
+      
+      const stockKilos = tieneStockKilo ? p.stockKilos : 0;
+      const stockGranel = tieneStockGranel ? p.stockGranel : 0;
+      const stockAproxUnidades = Math.floor(stockKilos / pesoUni);
+      
+      if (pesoTexto) {
+        let txt = `Cada unidad pesa aprox. <strong>${pesoUni}kg</strong>`;
+        if (tieneStockKilo && tieneStockGranel) {
+          txt += ` | Stock: ${stockKilos}kg / ${stockGranel}u`;
+        } else if (tieneStockKilo) {
+          txt += ` | Stock: ~${stockAproxUnidades} unidades (${stockKilos}kg)`;
+        } else if (tieneStockGranel) {
+          txt += ` | Stock: ${stockGranel} unidades`;
+        }
+        pesoTexto.innerHTML = txt;
+      }
+      
+      const precioAprox = calcularPrecioAproxUnidad(p.precioKilo, pesoUni);
+      
+      precios.innerHTML = `
+        ${p.precioKilo > 0 ? `<span class="price-tag price-kilo">${formatearCLP(p.precioKilo)}/kg</span>` : ''}
+        ${p.precioUnidad > 0 ? `<span class="price-tag price-unit">${formatearCLP(p.precioUnidad)}/u</span>` : ''}
+        ${(p.precioKilo > 0 && !p.precioUnidad) ? `<span class="price-tag" style="background: var(--accent-yellow); color: var(--primary);">≈ ${formatearCLP(precioAprox)}/u</span>` : ''}
+      `;
+      
+      let sinStock = false;
+      if (tieneStockKilo && tieneStockGranel) {
+        sinStock = stockKilos <= 0 && stockGranel <= 0;
+      } else if (tieneStockKilo) {
+        sinStock = stockKilos <= 0;
+      } else if (tieneStockGranel) {
+        sinStock = stockGranel <= 0;
+      } else {
+        sinStock = true;
+      }
+
+      const stockBajoKilo = tieneStockKilo && stockKilos > 0 && stockKilos <= (pesoUni * 5);
+      const stockBajoGranel = tieneStockGranel && stockGranel > 0 && stockGranel <= 5;
+      const stockBajo = stockBajoKilo || stockBajoGranel;
+
+      stock.className = `stock-badge ${sinStock ? 'stock-badge-out' : stockBajo ? 'stock-badge-low' : 'stock-badge-ok'}`;
+      
+      let badgeText = sinStock ? 'AGOTADO' : stockBajo ? 'POCO STOCK' : 'DISPONIBLE';
+      if (tieneStockKilo && tieneStockGranel) {
+        badgeText += ` (${stockKilos}kg / ${stockGranel}u)`;
+      } else if (tieneStockKilo) {
+        badgeText += ` (${stockKilos}kg)`;
+      } else if (tieneStockGranel) {
+        badgeText += ` (${stockGranel}u)`;
+      }
+      stock.textContent = badgeText;
+      
+      hid.value = id;
+      btn.disabled = sinStock || modoEliminar;
+      btn.onclick = () => { cerrarModal('modalProductoGrande'); abrirVariantes(id); };
+      abrirModal('modalProductoGrande');
+    };
+
+    // ========== CARGAR DESDE LOCALSTORAGE ==========
+    try {
+      const backupProductos = localStorage.getItem('productos_backup');
+      if (backupProductos) productos = JSON.parse(backupProductos);
+      
+      const backupGaleria = localStorage.getItem('galeria_backup');
+      if (backupGaleria) galeria = JSON.parse(backupGaleria);
+      
+      const backupCarrito = localStorage.getItem('ferre_v2_cart');
+      if (backupCarrito) carrito = JSON.parse(backupCarrito);
+    } catch (e) {
+      console.error('Error localStorage:', e);
+    }
+
+    // ========== FUNCIONES MODAL ==========
+    window.abrirModal = (id) => {
+      const modal = document.getElementById(id);
+      if (modal) {
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+      }
+    };
+    
+    window.cerrarModal = (id) => {
+      const modal = document.getElementById(id);
+      if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+      }
+    };
+
+    // ========== ACTUALIZAR PREVIEW DE PRECIO EN FORMULARIO ==========
+    function actualizarPreviewPrecio() {
+      const precioKg = parseFloat(document.getElementById('pPreKg')?.value) || 0;
+      const pesoUni = parseFloat(document.getElementById('pPesoUni')?.value) || 0.4;
+      const preview = document.getElementById('precioCalcPreview');
+      const valor = document.getElementById('precioAproxCalculado');
+      const pesoMostrado = document.getElementById('pesoMostrado');
+      const precioKgMostrado = document.getElementById('precioKgMostrado');
+      
+      if (precioKg > 0 && pesoUni > 0) {
+        const precioAprox = calcularPrecioAproxUnidad(precioKg, pesoUni);
+        valor.textContent = formatearCLP(precioAprox);
+        pesoMostrado.textContent = pesoUni;
+        precioKgMostrado.textContent = precioKg;
+        preview.style.display = 'block';
+      } else {
+        preview.style.display = 'none';
+      }
+    }
+
+    // ========== MANEJO DE FOTOS ==========
+    window.handleFotoSeleccionada = (input) => {
+      const file = input.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        fotoTemporal = e.target.result;
+        
+        const preview = document.getElementById('previewFoto');
+        const btnQuitar = document.getElementById('btnQuitarFoto');
+        preview.src = fotoTemporal;
+        preview.style.display = 'block';
+        btnQuitar.style.display = 'flex';
+      };
+      reader.readAsDataURL(file);
+    };
+
+    window.handleFotoGaleria = (input) => {
+      console.log('Foto de galería seleccionada');
+    };
+
+    window.quitarFoto = () => {
+      fotoTemporal = null;
+      document.getElementById('previewFoto').style.display = 'none';
+      document.getElementById('btnQuitarFoto').style.display = 'none';
+      document.getElementById('pImgCamara').value = '';
+      document.getElementById('pImgGaleria').value = '';
+    };
+
+    // ========== INICIALIZAR FIREBASE ==========
+    try {
+      app = initializeApp(firebaseConfig);
+      db = getDatabase(app);
+      dbRef = ref(db, 'productos');
+      galeriaRef = ref(db, 'galeria_ferre');
+      
+      signInAnonymously(getAuth(app)).catch(() => {});
+
+      onValue(dbRef, (snap) => {
+        if (snap.exists()) {
+          const nuevosProductos = [];
+          snap.forEach((childSnap) => {
+            const val = childSnap.val();
+            if (val && val.nombre) {
+              nuevosProductos.push({ id: childSnap.key, ...val });
+            }
+          });
+          
+          if (nuevosProductos.length > 0) {
+            productos = nuevosProductos;
+            localStorage.setItem('productos_backup', JSON.stringify(productos));
+          }
+        }
+        
+        datosCargados = true;
+        firebaseOk = true;
+        render();
+        renderGaleria();
+        actualizarCarritoUI();
+        ocultarLoader();
+      }, () => {
+        usarDatosLocales();
+      });
+
+      onValue(galeriaRef, (snap) => {
+        const nuevaGaleria = [];
+        snap.forEach((childSnap) => {
+          const val = childSnap.val();
+          if (val && val.url) nuevaGaleria.push({ id: childSnap.key, ...val });
+        });
+        
+        if (nuevaGaleria.length > 0) {
+          galeria = nuevaGaleria;
+          localStorage.setItem('galeria_backup', JSON.stringify(galeria));
+        }
+        renderGaleria();
+      });
+
+    } catch (e) {
+      usarDatosLocales();
+    }
+
+    setTimeout(() => {
+      if (!datosCargados) usarDatosLocales();
+    }, 4000);
+
+    function ocultarLoader() {
+      const loader = document.getElementById('loader');
+      if (loader) {
+        loader.style.opacity = '0';
+        setTimeout(() => loader.style.display = 'none', 300);
+      }
+    }
+
+    function usarDatosLocales() {
+      datosCargados = true;
+      render();
+      renderGaleria();
+      actualizarCarritoUI();
+      ocultarLoader();
+    }
+
+    // ========== ADMIN ==========
+    window.login = () => {
+      const pass = document.getElementById('passInput');
+      if (pass && pass.value === '1234') {
+        isAdmin = true;
+        cerrarModal('modalClave');
+        abrirModal('modalProd');
+        render();
+        renderGaleria();
+      } else {
+        alert('❌ Clave incorrecta');
+      }
+    };
+
+    // ========== MODO ELIMINAR/EDITAR ==========
+    window.activarModoEliminarDesdeModal = () => {
+      cerrarModal('modalProd');
+      modoEliminar = true;
+      document.getElementById('modoEliminarBanner').style.display = 'block';
+      render();
+      renderGaleria();
+    };
+
+    window.desactivarModoEliminar = () => {
+      modoEliminar = false;
+      document.getElementById('modoEliminarBanner').style.display = 'none';
+      render();
+      renderGaleria();
+    };
+
+    // ========== GUARDAR PRODUCTO ==========
+    window.guardar = async () => {
+      if (guardando) {
+        console.log('⏳ Ya se está guardando...');
+        return;
+      }
+      
+      const nom = document.getElementById('pNom')?.value.trim();
+      if (!nom) {
+        alert('⚠️ El nombre es obligatorio');
+        return;
+      }
+      
+      guardando = true;
+      const btnGuardar = document.getElementById('btnGuardar');
+      const textoOriginal = btnGuardar?.innerHTML;
+      if (btnGuardar) {
+        btnGuardar.innerHTML = '⏳ Guardando...';
+        btnGuardar.disabled = true;
+      }
+      
+      try {
+        const id = document.getElementById('pId')?.value || '';
+        const esEdicion = !!id;
+        
+        const stockKgInput = document.getElementById('pStockKg');
+        const stockKg = stockKgInput && stockKgInput.value !== '' ? parseFloat(stockKgInput.value) : null;
+        const stockGranelInput = document.getElementById('pStockGranel');
+        const stockGranel = stockGranelInput && stockGranelInput.value !== '' ? parseFloat(stockGranelInput.value) : null;
+        
+        const pesoUnidad = parseFloat(document.getElementById('pPesoUni')?.value) || 0.4;
+        
+        const preKgInput = document.getElementById('pPreKg');
+        const precioKilo = preKgInput && preKgInput.value !== '' ? parseFloat(preKgInput.value) : 0;
+        
+        const preUniInput = document.getElementById('pPreUni');
+        const precioUnidad = preUniInput && preUniInput.value !== '' ? parseFloat(preUniInput.value) : 0;
+        
+        const data = {
+          nombre: nom,
+          categoria: document.getElementById('pCat')?.value || 'Frutas',
+          stockKilos: stockKg,
+          stockGranel: stockGranel,
+          pesoUnidad: pesoUnidad,
+          precioKilo: precioKilo,
+          precioUnidad: precioUnidad,
+          desc: document.getElementById('pDesc')?.value.trim() || '',
+          updatedAt: Date.now()
+        };
+
+        if (!esEdicion) {
+          data.createdAt = Date.now();
+        }
+
+        let fotoFinal = null;
+        if (fotoTemporal) {
+          fotoFinal = await comprimirImagen(fotoTemporal);
+        }
+
+        if (fotoFinal) {
+          data.foto = fotoFinal;
+        } else if (esEdicion) {
+          const existente = productos.find(p => p.id === id);
+          if (existente?.foto) data.foto = existente.foto;
+          else data.foto = 'https://via.placeholder.com/200';
+        } else {
+          data.foto = 'https://via.placeholder.com/200';
+        }
+
+        if (esEdicion) {
+          // ========== EDICIÓN ==========
+          console.log('Editando producto:', id);
+          
+          // Actualizar en Firebase si está disponible
+          if (db && !id.startsWith('local-')) {
+            try {
+              await set(ref(db, 'productos/' + id), data);
+              console.log('✅ Actualizado en Firebase');
+            } catch (firebaseError) {
+              console.warn('⚠️ Error Firebase:', firebaseError);
+            }
+          }
+          
+          // SIEMPRE actualizar en el array local
+          const idx = productos.findIndex(p => p.id === id);
+          if (idx >= 0) {
+            productos[idx] = { id, ...data };
+          } else {
+            productos.push({ id, ...data });
+          }
+          
+          localStorage.setItem('productos_backup', JSON.stringify(productos));
+          console.log('✅ Producto actualizado localmente:', id);
+          
+          limpiarFormulario();
+          cerrarModal('modalProd');
+          render();
+          
+        } else {
+          // ========== NUEVO PRODUCTO ==========
+          const existe = productos.find(p => p.nombre.toLowerCase() === nom.toLowerCase());
+          if (existe && !confirm('⚠️ Ya existe un producto con este nombre. ¿Crear de todos modos?')) {
+            guardando = false;
+            if (btnGuardar) {
+              btnGuardar.innerHTML = textoOriginal;
+              btnGuardar.disabled = false;
+            }
+            return;
+          }
+          
+          let newId;
+          
+          // Intentar crear en Firebase
+          if (db) {
+            try {
+              const nuevoRef = await push(dbRef, data);
+              newId = nuevoRef.key;
+              console.log('✅ Creado en Firebase:', newId);
+            } catch (firebaseError) {
+              console.warn('⚠️ Error Firebase, creando local:', firebaseError);
+              newId = 'local-' + Date.now();
+            }
+          } else {
+            newId = 'local-' + Date.now();
+          }
+          
+          // Agregar al array local
+          productos.push({ id: newId, ...data });
+          localStorage.setItem('productos_backup', JSON.stringify(productos));
+          
+          // Agregar a galería si corresponde
+          const gImgInput = document.getElementById('gImg');
+          if (gImgInput?.files?.[0] && fotoFinal && db) {
+            try {
+              await push(galeriaRef, { url: fotoFinal, createdAt: Date.now() });
+            } catch (e) {
+              console.warn('Error guardando en galería:', e);
+            }
+          }
+          
+          limpiarFormulario();
+          cerrarModal('modalProd');
+          render();
+        }
+        
+      } catch (e) {
+        console.error('❌ Error guardando:', e);
+        alert('❌ Error al guardar: ' + e.message);
+      } finally {
+        guardando = false;
+        if (btnGuardar) {
+          btnGuardar.innerHTML = textoOriginal || '💾 GUARDAR PRODUCTO';
+          btnGuardar.disabled = false;
+        }
+      }
+    };
+
+    async function comprimirImagen(base64String) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+
+        img.onload = () => {
+          const maxWidth = 800;
+          const scale = maxWidth / img.width;
+          const width = img.width > maxWidth ? maxWidth : img.width;
+          const height = img.width > maxWidth ? img.height * scale : img.height;
+
+          canvas.width = width;
+          canvas.height = height;
+          ctx.drawImage(img, 0, 0, width, height);
+
+          const compressed = canvas.toDataURL('image/jpeg', 0.8);
+          resolve(compressed);
+        };
+
+        img.src = base64String;
+      });
+    }
+
+    function limpiarFormulario() {
+      document.getElementById('pId').value = '';
+      document.getElementById('pNom').value = '';
+      document.getElementById('pPreKg').value = '';
+      document.getElementById('pPreUni').value = '';
+      document.getElementById('pStockKg').value = '';
+      document.getElementById('pStockGranel').value = '';
+      document.getElementById('pPesoUni').value = '0.4';
+      document.getElementById('pDesc').value = '';
+      document.getElementById('precioCalcPreview').style.display = 'none';
+      document.getElementById('modalProdTitle').textContent = '🥦 Nuevo Producto';
+      quitarFoto();
+    }
+
+    window.editar = (id) => {
+      if (modoEliminar) {
+        desactivarModoEliminar();
+      }
+      
+      const p = productos.find(x => x.id === id);
+      if (!p) {
+        alert('❌ Producto no encontrado');
+        return;
+      }
+      
+      // Limpiar primero
+      limpiarFormulario();
+      
+      // Llenar el formulario con los datos del producto
+      document.getElementById('pId').value = id;
+      document.getElementById('pNom').value = p.nombre || '';
+      document.getElementById('pCat').value = p.categoria || 'Frutas';
+      document.getElementById('pPreKg').value = p.precioKilo !== undefined ? p.precioKilo : '';
+      document.getElementById('pPreUni').value = p.precioUnidad !== undefined ? p.precioUnidad : '';
+      document.getElementById('pStockKg').value = p.stockKilos !== undefined && p.stockKilos !== null ? p.stockKilos : '';
+      document.getElementById('pStockGranel').value = p.stockGranel !== undefined && p.stockGranel !== null ? p.stockGranel : '';
+      document.getElementById('pPesoUni').value = p.pesoUnidad || 0.4;
+      document.getElementById('pDesc').value = p.desc || '';
+      document.getElementById('modalProdTitle').textContent = '✏️ Editar Producto';
+      
+      // Actualizar preview de precio
+      actualizarPreviewPrecio();
+      
+      // Mostrar foto si existe
+      if (p.foto && p.foto !== 'https://via.placeholder.com/200') {
+        fotoTemporal = p.foto;
+        const preview = document.getElementById('previewFoto');
+        const btnQuitar = document.getElementById('btnQuitarFoto');
+        preview.src = p.foto;
+        preview.style.display = 'block';
+        btnQuitar.style.display = 'flex';
+      }
+      
+      abrirModal('modalProd');
+    };
+
+    // Variable global para almacenar el ID a eliminar
+    let idAEliminar = null;
+
+    window.borrarDB = (id) => {
+      if (!id) {
+        alert('❌ ID de producto no válido');
+        return;
+      }
+      
+      console.log('Preparando para eliminar:', id);
+      idAEliminar = id;
+      
+      document.getElementById('confirmMessage').innerText = '¿Eliminar este producto permanentemente?';
+      abrirModal('modalConfirm');
+    };
+
+    // Configurar el botón de confirmación
+    document.getElementById('btnConfirmarSi')?.addEventListener('click', async () => {
+      console.log('Confirmando eliminación de:', idAEliminar);
+      
+      if (!idAEliminar) {
+        cerrarModal('modalConfirm');
+        return;
+      }
+      
+      const id = idAEliminar;
+      
+      try {
+        // Eliminar de Firebase si está disponible y no es local
+        if (db && !id.startsWith('local-')) {
+          try {
+            await remove(ref(db, 'productos/' + id));
+            console.log('✅ Eliminado de Firebase');
+          } catch (firebaseError) {
+            console.warn('⚠️ Error Firebase al eliminar:', firebaseError);
+          }
+        }
+        
+        // SIEMPRE eliminar del array local
+        productos = productos.filter(p => p.id !== id);
+        localStorage.setItem('productos_backup', JSON.stringify(productos));
+        
+        console.log('✅ Producto eliminado localmente:', id);
+        
+        // Limpiar ID
+        idAEliminar = null;
+        
+        // Cerrar modal
+        cerrarModal('modalConfirm');
+        
+        // Re-renderizar
+        render();
+        
+      } catch (e) {
+        console.error('❌ Error eliminando:', e);
+        alert('❌ Error al eliminar: ' + e.message);
+        idAEliminar = null;
+        cerrarModal('modalConfirm');
+      }
+    });
+
+    window.borrarImgGaleria = (id) => {
+      document.getElementById('confirmMessage').innerText = '¿Eliminar esta imagen?';
+      abrirModal('modalConfirm');
+      
+      // Sobreescribir temporalmente el handler
+      const btnSi = document.getElementById('btnConfirmarSi');
+      const handler = async () => {
+        try {
+          if (db) {
+            await remove(ref(db, 'galeria_ferre/' + id));
+          }
+          galeria = galeria.filter(g => g.id !== id);
+          localStorage.setItem('galeria_backup', JSON.stringify(galeria));
+          renderGaleria();
+          cerrarModal('modalConfirm');
+        } catch (e) {
+          console.error('Error eliminando imagen:', e);
+        }
+        btnSi.removeEventListener('click', handler);
+      };
+      
+      btnSi.addEventListener('click', handler);
+    };
+
+    // ========== CARRITO ==========
+    window.abrirVariantes = (id) => {
+      if (modoEliminar) {
+        borrarDB(id);
+        return;
+      }
+      
+      const p = productos.find(x => x.id === id);
+      if (!p) return;
+      
+      document.getElementById('varProdId').value = id;
+      document.getElementById('varTitle').innerText = p.nombre;
+      
+      const tienePrecioKilo = p.precioKilo > 0;
+      const tienePrecioUnidad = p.precioUnidad > 0;
+      const tieneStockKilo = p.stockKilos !== null && p.stockKilos !== undefined;
+      const pesoUni = p.pesoUnidad || 0.4;
+      
+      // Mostrar info de peso
+      const pesoInfo = document.getElementById('pesoInfoCliente');
+      const textoPeso = document.getElementById('textoPesoInfo');
+      if (pesoInfo && textoPeso) {
+        const precioAprox = calcularPrecioAproxUnidad(p.precioKilo, pesoUni);
+         pesoInfo.style.display = 'block';
+      }
+      
+      let html = '';
+      if (tienePrecioKilo || tienePrecioUnidad) {
+        html += `<div class="option-group">
+          <label>Modo de compra</label>
+          <div>
+            ${(tienePrecioKilo && tieneStockKilo) ? `<button type="button" class="option-btn active" data-modo="kilo" onclick="selectModo('kilo')">⚖️ Por kilo ${formatearCLP(p.precioKilo)}/kg</button>` : ''}
+            ${tienePrecioUnidad ? `<button type="button" class="option-btn ${(!tienePrecioKilo || !tieneStockKilo) ? 'active' : ''}" data-modo="unidad" onclick="selectModo('unidad')">📦 Por unidad ${formatearCLP(p.precioUnidad)}/u</button>` : ''}
+            ${(tienePrecioKilo && !tienePrecioUnidad) ? `<button type="button" class="option-btn ${!tieneStockKilo ? 'active' : ''}" data-modo="unidad_estimada" onclick="selectModo('unidad_estimada')">🥬 Por unidad (≈${formatearCLP(calcularPrecioAproxUnidad(p.precioKilo, pesoUni))})</button>` : ''}
+          </div>
+        </div>`;
+      }
+      
+      html += `<div>
+        <label>Cantidad</label>
+        <input id="varCantidad" type="number" min="0.1" step="0.1" value="1" style="width: 100%; padding: 12px; border: 2px solid var(--accent-yellow); border-radius: 10px; font-size: 1.1rem; text-align: center;" oninput="actualizarPreviewVariante()">
+      </div>`;
+      
+      document.getElementById('varOptions').innerHTML = html;
+      
+      // Mostrar preview inicial
+      setTimeout(actualizarPreviewVariante, 100);
+      
+      abrirModal('modalVariantes');
+    };
+
+    window.selectModo = (modo) => {
+      document.querySelectorAll('#varOptions .option-btn').forEach(b => b.classList.remove('active'));
+      document.querySelector(`[data-modo="${modo}"]`)?.classList.add('active');
+      
+      const input = document.getElementById('varCantidad');
+      if (!input) return;
+      
+      if (modo === 'kilo') {
+        input.step = '0.1'; 
+        input.min = '0.1';
+        if (parseFloat(input.value) < 0.1) input.value = '0.1';
+      } else {
+        input.step = '1'; 
+        input.min = '1';
+        input.value = Math.max(1, Math.round(parseFloat(input.value) || 1));
+      }
+      
+      actualizarPreviewVariante();
+    };
+
+    window.actualizarPreviewVariante = () => {
+      const id = document.getElementById('varProdId')?.value;
+      const cantidad = parseFloat(document.getElementById('varCantidad')?.value) || 0;
+      const p = productos.find(x => x.id === id);
+      if (!p) return;
+      
+      const modoBtn = document.querySelector('#varOptions .option-btn.active');
+      const modo = modoBtn?.dataset.modo || 'kilo';
+      
+      let precioUnitario = 0;
+      let total = 0;
+      
+      if (modo === 'kilo') {
+        precioUnitario = p.precioKilo;
+        total = precioUnitario * cantidad;
+      } else if (modo === 'unidad') {
+        precioUnitario = p.precioUnidad;
+        total = precioUnitario * cantidad;
+      } else if (modo === 'unidad_estimada') {
+        precioUnitario = calcularPrecioAproxUnidad(p.precioKilo, p.pesoUnidad || 0.4);
+        total = precioUnitario * cantidad;
+      }
+      
+      const preview = document.getElementById('previewCalculoVariante');
+      const valor = document.getElementById('totalEstimadoVariante');
+      
+      if (preview && valor && cantidad > 0) {
+        valor.textContent = formatearCLP(total);
+        preview.style.display = 'block';
+      } else if (preview) {
+        preview.style.display = 'none';
+      }
+    };
+
+    window.confirmarVariantes = () => {
+      const id = document.getElementById('varProdId')?.value;
+      const cantidad = parseFloat(document.getElementById('varCantidad')?.value) || 1;
+      
+      if (!id) return;
+      
+      const p = productos.find(x => x.id === id);
+      if (!p) return;
+      
+      const modoBtn = document.querySelector('#varOptions .option-btn.active');
+      const modo = modoBtn?.dataset.modo || 'kilo';
+      
+      // Calcular consumo de stock en kg según modo
+      let stockConsumido;
+      let precioUnitario;
+      
+      if (modo === 'kilo') {
+        stockConsumido = cantidad;
+        precioUnitario = p.precioKilo;
+      } else if (modo === 'unidad') {
+        stockConsumido = cantidad * (p.pesoUnidad || 0.4);
+        precioUnitario = p.precioUnidad;
+      } else if (modo === 'unidad_estimada') {
+        stockConsumido = cantidad * (p.pesoUnidad || 0.4);
+        precioUnitario = calcularPrecioAproxUnidad(p.precioKilo, p.pesoUnidad || 0.4);
+      }
+      
+      // Verificar stock disponible
+      let stockDisponible = 0;
+      let stockTipo = 'kg';
+      
+      if (modo === 'kilo') {
+        stockDisponible = p.stockKilos !== null ? p.stockKilos : 0;
+        stockTipo = 'kg';
+      } else {
+        // Para unidades, preferir stockGranel si existe, si no usar stockKilos
+        if (p.stockGranel !== null && p.stockGranel !== undefined) {
+          stockDisponible = p.stockGranel;
+          stockTipo = 'unidades';
+          stockConsumido = cantidad; // En este caso consumimos unidades directamente
+        } else {
+          stockDisponible = p.stockKilos !== null ? p.stockKilos : 0;
+          stockTipo = 'kg';
+          stockConsumido = cantidad * (p.pesoUnidad || 0.4);
+        }
+      }
+
+      const enCarritoMismoStock = carrito
+        .filter(item => item.id === id && (
+          (modo === 'kilo' && item.modo === 'kilo') || 
+          (modo !== 'kilo' && item.modo !== 'kilo' && p.stockGranel !== null) ||
+          (p.stockGranel === null && item.id === id) // Si no hay stock granel, todo consume kg
+        ))
+        .reduce((sum, item) => sum + (item.stockConsumido || 0), 0);
+        
+      if (enCarritoMismoStock + stockConsumido > stockDisponible) {
+        const restante = Math.max(0, stockDisponible - enCarritoMismoStock);
+        let mensajeRestante = `${restante.toFixed(2)}${stockTipo}`;
+        if (stockTipo === 'kg' && modo !== 'kilo') {
+          const unidadesRestantes = Math.floor(restante / (p.pesoUnidad || 0.4));
+          mensajeRestante = `~${unidadesRestantes} unidades (${restante.toFixed(2)}kg)`;
+        }
+        alert(`⚠️ Stock insuficiente. Disponible: ${mensajeRestante}`);
+        return;
+      }
+      
+      // Guardar en carrito con info de stock consumido y precio
+      const existente = carrito.find(item => item.id === id && item.modo === modo);
+      if (existente) {
+        existente.cantidad += cantidad;
+        existente.stockConsumido += stockConsumido;
+      } else {
+        carrito.push({ 
+          id, 
+          cantidad, 
+          modo,
+          stockConsumido: stockConsumido,
+          precioUnitario: precioUnitario
+        });
+      }
+      
+      localStorage.setItem('ferre_v2_cart', JSON.stringify(carrito));
+      cerrarModal('modalVariantes');
+      actualizarCarritoUI();
+      
+      const happy = document.getElementById('happy-cart');
+      happy?.classList.add('active');
+      setTimeout(() => happy?.classList.remove('active'), 2000);
+    };
+
+    window.cambiarCantidad = (index, delta) => {
+      const item = carrito[index];
+      if (!item) return;
+      
+      const p = productos.find(x => x.id === item.id);
+      if (!p) return;
+      
+      const step = item.modo === 'kilo' ? 0.1 : 1;
+      let nuevaCantidad = item.cantidad + (delta > 0 ? step : -step);
+      
+      if (item.modo === 'kilo') nuevaCantidad = Math.round(nuevaCantidad * 10) / 10;
+      else nuevaCantidad = Math.round(nuevaCantidad);
+      
+      if (nuevaCantidad < step) nuevaCantidad = step;
+      
+      // Recalcular stock consumido y disponible
+      let nuevoStockConsumido;
+      let stockDisponible;
+      
+      if (item.modo === 'kilo') {
+        nuevoStockConsumido = nuevaCantidad;
+        stockDisponible = p.stockKilos !== null ? p.stockKilos : 0;
+      } else {
+        if (p.stockGranel !== null && p.stockGranel !== undefined) {
+          nuevoStockConsumido = Math.round(nuevaCantidad);
+          stockDisponible = p.stockGranel;
+        } else {
+          nuevoStockConsumido = nuevaCantidad * (p.pesoUnidad || 0.4);
+          stockDisponible = p.stockKilos !== null ? p.stockKilos : 0;
+        }
+      }
+      
+      const otros = carrito.filter((_, i) => i !== index && carrito[i].id === item.id && (
+          (item.modo === 'kilo' && carrito[i].modo === 'kilo') || 
+          (item.modo !== 'kilo' && carrito[i].modo !== 'kilo' && p.stockGranel !== null) ||
+          (p.stockGranel === null && carrito[i].id === item.id)
+        ))
+        .reduce((s, i) => s + (i.stockConsumido || 0), 0);
+        
+      if (otros + nuevoStockConsumido > stockDisponible) {
+        alert('⚠️ Sin stock suficiente'); 
+        return;
+      }
+      
+      item.cantidad = nuevaCantidad;
+      item.stockConsumido = nuevoStockConsumido;
+      localStorage.setItem('ferre_v2_cart', JSON.stringify(carrito));
+      actualizarCarritoUI();
+    };
+
+    window.borrarDelCarrito = (index) => {
+      carrito.splice(index, 1);
+      localStorage.setItem('ferre_v2_cart', JSON.stringify(carrito));
+      actualizarCarritoUI();
+    };
+
+    window.enviarWhatsApp = () => {
+      const metodo = document.getElementById('payMethod')?.value;
+      const nombre = document.getElementById('customerName')?.value.trim();
+      
+      if (!metodo || !nombre) {
+        alert('⚠️ Completa todos los campos');
+        return;
+      }
+      
+      const metodoTxt = { transferencia: 'Transferencia', tarjeta: 'Tarjeta', efectivo: 'Efectivo' }[metodo];
+      
+      let msg = `🥬 *PEDIDO NORMITA* 🥬\\n👤 ${nombre}\\n💳 ${metodoTxt}\\n\\n`;
+      let total = 0;
+      
+      carrito.forEach(item => {
+        const p = productos.find(x => x.id === item.id);
+        if (!p) return;
+        
+        const subtotal = (item.precioUnitario || 0) * item.cantidad;
+        total += subtotal;
+        
+        let detalleCantidad = item.modo === 'kilo' ? `${item.cantidad}kg` : `${item.cantidad}u`;
+        if (item.modo === 'unidad_estimada') detalleCantidad = `${item.cantidad}u (≈${(item.cantidad * (p.pesoUnidad || 0.4)).toFixed(2)}kg)`;
+        
+        msg += `📦 ${p.nombre}\\n   ${detalleCantidad} x ${formatearCLP(item.precioUnitario)} = ${formatearCLP(subtotal)}\\n`;
+        
+        // Restar stock
+        if (firebaseOk && p.id && !p.id.startsWith('local-') && db) {
+          if (item.modo === 'kilo') {
+            const nuevoStock = Math.max(0, (p.stockKilos || 0) - (item.stockConsumido || 0));
+            set(ref(db, `productos/${p.id}/stockKilos`), nuevoStock).catch(() => {});
+            p.stockKilos = nuevoStock;
+          } else if (p.stockGranel !== null && p.stockGranel !== undefined) {
+            const nuevoStock = Math.max(0, (p.stockGranel || 0) - (item.stockConsumido || 0));
+            set(ref(db, `productos/${p.id}/stockGranel`), nuevoStock).catch(() => {});
+            p.stockGranel = nuevoStock;
+          } else {
+            const nuevoStock = Math.max(0, (p.stockKilos || 0) - (item.stockConsumido || 0));
+            set(ref(db, `productos/${p.id}/stockKilos`), nuevoStock).catch(() => {});
+            p.stockKilos = nuevoStock;
+          }
+        }
+      });
+      
+      msg += `\\n💰 *TOTAL: ${formatearCLP(total)}*`;
+      
+      localStorage.setItem('productos_backup', JSON.stringify(productos));
+      carrito = [];
+      localStorage.removeItem('ferre_v2_cart');
+      actualizarCarritoUI();
+      cerrarModal('modalCarrito');
+      
+      window.open(`https://wa.me/56954998792?text=${encodeURIComponent(msg)}`, '_blank');
+    };
+
+    // ========== RENDER ==========
+    function actualizarCarritoUI() {
+      const list = document.getElementById('cartList');
+      const count = document.getElementById('cartCount');
+      const total = document.getElementById('cartTotal');
+      const btn = document.getElementById('whatsappBtn');
+      const payMethod = document.getElementById('payMethod');
+      const customerName = document.getElementById('customerName');
+      
+      if (list) list.innerHTML = '';
+      
+      let sum = 0, itemsCount = 0;
+      
+      carrito.forEach((item, i) => {
+        const p = productos.find(x => x.id === item.id);
+        if (!p) return;
+        
+        const precio = item.precioUnitario || 0;
+        const subtotal = precio * item.cantidad;
+        sum += subtotal;
+        
+        // Contar items (convertir kg a unidades aproximadas para el contador)
+        if (item.modo === 'kilo') {
+          itemsCount += Math.ceil(item.cantidad / (p.pesoUnidad || 0.4));
+        } else {
+          itemsCount += item.cantidad;
+        }
+        
+        const step = item.modo === 'kilo' ? 0.1 : 1;
+        
+        let detalleModo = item.modo === 'kilo' ? '/kg' : '/u';
+        let detallePeso = '';
+        if (item.modo === 'unidad_estimada') {
+          detallePeso = ` (~${(item.cantidad * (p.pesoUnidad || 0.4)).toFixed(2)}kg)`;
+        }
+        
+        if (list) {
+          list.innerHTML += `
+            <div class="cart-item">
+              <img src="${p.foto || 'https://via.placeholder.com/200'}" class="cart-img-min" onerror="this.src='https://via.placeholder.com/200'">
+              <div>
+                <div style="font-weight:700; font-size:0.95rem; color: var(--primary);">${p.nombre}</div>
+                <div style="font-size:0.8rem; color:#666;">${formatearCLP(precio)}${detalleModo}${detallePeso}</div>
+                <button class="btn-delete-item" onclick="borrarDelCarrito(${i})">Eliminar</button>
+              </div>
+              <div style="text-align:right">
+                <div class="qty-controls">
+                  <button class="btn-qty" onclick="cambiarCantidad(${i}, -${step})">−</button>
+                  <input class="qty-input" readonly value="${item.cantidad}">
+                  <button class="btn-qty" onclick="cambiarCantidad(${i}, ${step})">+</button>
+                </div>
+                <div style="font-weight:800; margin-top:5px; color: var(--primary);">${formatearCLP(subtotal)}</div>
+              </div>
+            </div>
+          `;
+        }
+      });
+      
+      if (count) count.innerText = itemsCount;
+      if (total) total.innerText = formatearCLP(sum);
+      
+      if (btn) {
+        btn.disabled = carrito.length === 0 || !payMethod?.value || !customerName?.value?.trim();
+      }
+    }
+
+    function render() {
+      const grid = document.getElementById('listaProductos');
+      if (!grid) return;
+      
+      const fragment = document.createDocumentFragment();
+      
+      const filtrados = productos.filter(p => {
+        const coincideTexto = !filtroTexto || 
+          (p.nombre?.toLowerCase().includes(filtroTexto)) ||
+          (p.desc?.toLowerCase().includes(filtroTexto));
+        const coincideCat = filtroCategoria === 'all' || p.categoria === filtroCategoria;
+        return coincideTexto && coincideCat;
+      });
+      
+      if (filtrados.length === 0) {
+        grid.innerHTML = `
+          <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #666;">
+            <div style="font-size: 3rem;">🥬</div>
+            <p>No hay productos</p>
+          </div>
+        `;
+        return;
+      }
+      
+      const renderLote = (startIdx) => {
+        const loteSize = 20;
+        const endIdx = Math.min(startIdx + loteSize, filtrados.length);
+        
+        for (let i = startIdx; i < endIdx; i++) {
+          const p = filtrados[i];
+          const pesoUni = p.pesoUnidad || 0.4;
+          
+          const tieneStockKilo = p.stockKilos !== null && p.stockKilos !== undefined;
+          const tieneStockGranel = p.stockGranel !== null && p.stockGranel !== undefined;
+          
+          const stockKilos = tieneStockKilo ? p.stockKilos : 0;
+          const stockGranel = tieneStockGranel ? p.stockGranel : 0;
+          
+          const stockAproxUnidades = Math.floor(stockKilos / pesoUni);
+          
+          // Considerar sin stock si ambos son 0 o null (si están definidos)
+          const sinStockKilo = tieneStockKilo && stockKilos <= 0;
+          const sinStockGranel = tieneStockGranel && stockGranel <= 0;
+          
+          // Si solo tiene uno definido, ese manda. Si tiene ambos, ambos mandan.
+          let sinStock = false;
+          if (tieneStockKilo && tieneStockGranel) {
+            sinStock = sinStockKilo && sinStockGranel;
+          } else if (tieneStockKilo) {
+            sinStock = sinStockKilo;
+          } else if (tieneStockGranel) {
+            sinStock = sinStockGranel;
+          } else {
+            sinStock = true; // Por defecto si nada está definido
+          }
+
+          const stockBajoKilo = tieneStockKilo && stockKilos > 0 && stockKilos <= (pesoUni * 5);
+          const stockBajoGranel = tieneStockGranel && stockGranel > 0 && stockGranel <= 5;
+          const stockBajo = stockBajoKilo || stockBajoGranel;
+          
+          const stockClass = sinStock ? 'stock-badge-out' : stockBajo ? 'stock-badge-low' : 'stock-badge-ok';
+          
+          let stockText = '';
+          if (tieneStockKilo && tieneStockGranel) {
+            stockText = `${stockKilos}kg / ${stockGranel}u`;
+          } else if (tieneStockKilo) {
+            stockText = `${stockKilos}kg (≈${stockAproxUnidades}u)`;
+          } else if (tieneStockGranel) {
+            stockText = `${stockGranel}u`;
+          }
+
+          const card = document.createElement('div');
+          card.className = 'card';
+          
+          const eliminarOverlay = modoEliminar ? 
+            `<div style="position: absolute; inset: 0; background: rgba(255,23,68,0.2); z-index: 5; display: flex; align-items: center; justify-content: center; pointer-events: none;">
+              <span style="background: var(--danger); color: white; padding: 10px 20px; border-radius: 10px; font-weight: 700; font-size: 1.2rem;">🗑️ TOCAR PARA ELIMINAR</span>
+            </div>` : '';
+          
+          // Calcular precio aproximado por unidad si solo tiene precio por kilo
+          const precioAprox = (!p.precioUnidad && p.precioKilo) ? calcularPrecioAproxUnidad(p.precioKilo, pesoUni) : null;
+          
+          card.innerHTML = `
+            ${eliminarOverlay}
+            ${isAdmin && !modoEliminar ? `<div class="admin-btns">
+              <button class="admin-btn" onclick="event.stopPropagation(); editar('${p.id}')">✏️</button>
+              <button class="admin-btn delete" onclick="event.stopPropagation(); borrarDB('${p.id}')">🗑️</button>
+            </div>` : ''}
+            
+            <div class="card-img card-img-clickable" onclick="abrirProductoGrande('${p.id}')">
+              <img src="${p.foto || 'https://via.placeholder.com/200'}" 
+                   onerror="this.src='https://via.placeholder.com/200'" 
+                   alt="${p.nombre}" loading="lazy">
+              <div class="zoom-hint">🔍 Toca para ampliar</div>
+            </div>
+            
+            <div class="card-info">
+              <span class="stock-badge ${stockClass}">
+               (${stockText}) ${sinStock ? 'AGOTADO' : stockBajo ? 'POCO STOCK ' : 'DISPONIBLE'}
+              </span>
+              <h3>${p.nombre || 'Sin nombre'}</h3>
+              ${p.desc ? `<div class="card-desc">${p.desc}</div>` : ''}
+              <div class="precio-tag">
+                ${p.precioKilo > 0 ? `${formatearCLP(p.precioKilo)}/kg ` : ''}
+                ${p.precioUnidad > 0 ? `${formatearCLP(p.precioUnidad)}/u` : ''}
+              </div>
+              ${precioAprox ? `<div class="precio-aprox">≈ ${formatearCLP(precioAprox)} por unidad (${pesoUni}kg)</div>` : ''}
+              <button class="btn-add" ${sinStock || modoEliminar ? 'disabled' : ''} onclick="event.stopPropagation(); abrirVariantes('${p.id}')">
+                ${modoEliminar ? 'TOCA PARA ELIMINAR' : sinStock ? 'AGOTADO' : 'AGREGAR 🛒'}
+              </button>
+            </div>
+          `;
+          fragment.appendChild(card);
+        }
+        
+        if (endIdx < filtrados.length) {
+          requestIdleCallback(() => renderLote(endIdx));
+        } else {
+          grid.innerHTML = '';
+          grid.appendChild(fragment);
+        }
+      };
+      
+      renderLote(0);
+    }
+function copiarPrecio() {
+    const precioKg = parseFloat(document.getElementById('pPreKg')?.value) || 0;
+    const pesoUni = parseFloat(document.getElementById('pPesoUni')?.value) || 0.4;
+    
+    if (precioKg > 0 && pesoUni > 0) {
+        const precioUnidad = Math.round(precioKg * pesoUni);
+        document.getElementById("pPreUni").value = precioUnidad;
+    }
+}
+
+setInterval(copiarPrecio, 100);
+    function renderGaleria() {
+      const cont = document.getElementById('galeriaSuperior');
+      if (!cont) return;
+      
+      if (galeria.length === 0) {
+        cont.innerHTML = '';
+        return;
+      }
+      
+      cont.innerHTML = galeria.map(g => `
+        <div class="gallery-item" style="${modoEliminar ? 'border-color: var(--danger);' : ''}">
+          <img src="${g.url}" onerror="this.style.display='none'" loading="lazy">
+          ${isAdmin || modoEliminar ? `<button class="gallery-delete" onclick="borrarImgGaleria('${g.id}')">✕</button>` : ''}
+        </div>
+      `).join('');
+    }
+
+    // ========== EVENT LISTENERS ==========
+    document.getElementById('searchInput')?.addEventListener('input', (e) => {
+      filtroTexto = e.target.value.toLowerCase();
+      render();
+    });
+
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        filtroCategoria = btn.dataset.cat || 'all';
+        render();
+      });
+    });
+
+    document.getElementById('payMethod')?.addEventListener('change', actualizarCarritoUI);
+    document.getElementById('customerName')?.addEventListener('input', actualizarCarritoUI);
+    
+    // Listeners para calcular precio aproximado en tiempo real
+    document.getElementById('pPreKg')?.addEventListener('input', actualizarPreviewPrecio);
+    document.getElementById('pPesoUni')?.addEventListener('input', actualizarPreviewPrecio);
+
+    // Cerrar modal al hacer clic fuera
+    document.querySelectorAll('.modal').forEach(modal => {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) cerrarModal(modal.id);
+      });
+    });
+
+    // ========== INICIALIZACIÓN ==========
+    console.log('🚀 NORMITA iniciado con sistema de stock dual');
+    render();
+    renderGaleria();
+    actualizarCarritoUI();
+  </script>
+</body>
+</html>
