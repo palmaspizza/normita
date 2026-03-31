@@ -842,7 +842,7 @@
           </div>
           <div>
             <label>Peso promedio por unidad (kg)</label>
-            <input type="number" id="pPesoUni" step="0.01" min="0.01" placeholder="0.4" value="0.4">
+            <input type="number" id="pPesoUni" step="0.01" min="0.01" placeholder="Ej: 0.4" >
           </div>
           <div>
             <label>Precio kilo ($) (opcional)</label>
@@ -1649,58 +1649,105 @@
 
     // ========== CARRITO ==========
     window.abrirVariantes = (id) => {
-      if (modoEliminar) {
-        borrarDB(id);
-        return;
-      }
-      
-      const p = productos.find(x => x.id === id);
-      if (!p) return;
-      
-      document.getElementById('varProdId').value = id;
-      document.getElementById('varTitle').innerText = p.nombre;
-      
-      const tienePrecioKilo = p.precioKilo > 0;
-      const tienePrecioUnidad = p.precioUnidad > 0;
-      const tieneStockKilo = p.stockKilos !== null && p.stockKilos !== undefined;
-      const pesoUni = p.pesoUnidad || 0.4;
-      
-      // Mostrar info de peso
-      const pesoInfo = document.getElementById('pesoInfoCliente');
-      const textoPeso = document.getElementById('textoPesoInfo');
-      if (pesoInfo && textoPeso) {
-        const precioAprox = calcularPrecioAproxUnidad(p.precioKilo, pesoUni);
-         pesoInfo.style.display = 'block';
-      }
-      
-      let html = '';
-      if (tienePrecioKilo || tienePrecioUnidad) {
-        html += `<div class="option-group">
-          <label>Modo de compra</label>
-          <div>
-            ${(tienePrecioKilo && tieneStockKilo) ? `<button type="button" class="option-btn active" data-modo="kilo" onclick="selectModo('kilo')">⚖️ Por kilo ${formatearCLP(p.precioKilo)}/kg</button>` : ''}
-            ${tienePrecioUnidad ? `<button type="button" class="option-btn ${(!tienePrecioKilo || !tieneStockKilo) ? 'active' : ''}" data-modo="unidad" onclick="selectModo('unidad')">📦 Por unidad ${formatearCLP(p.precioUnidad)}/u</button>` : ''}
-            ${(tienePrecioKilo && !tienePrecioUnidad) ? `<button type="button" class="option-btn ${!tieneStockKilo ? 'active' : ''}" data-modo="unidad_estimada" onclick="selectModo('unidad_estimada')">🥬 Por unidad (≈${formatearCLP(calcularPrecioAproxUnidad(p.precioKilo, pesoUni))})</button>` : ''}
-          </div>
-        </div>`;
-      }
-      
-      html += `<div>
-        <label>Cantidad</label>
-        <input id="varCantidad" type="number" min="0.1" step="0.1" value="1" style="width: 100%; padding: 12px; border: 2px solid var(--accent-yellow); border-radius: 10px; font-size: 1.1rem; text-align: center;" oninput="actualizarPreviewVariante()">
-      </div>`;
-      
-      document.getElementById('varOptions').innerHTML = html;
-      
-      // Mostrar preview inicial
-      setTimeout(actualizarPreviewVariante, 100);
-      
-      abrirModal('modalVariantes');
-    };
+  if (modoEliminar) {
+    borrarDB(id);
+    return;
+  }
+  
+  const p = productos.find(x => x.id === id);
+  if (!p) return;
+  
+  document.getElementById('varProdId').value = id;
+  document.getElementById('varTitle').innerText = p.nombre;
+  
+  const tienePrecioKilo = p.precioKilo > 0;
+  // IMPORTANTE: Solo considerar precio unidad si fue ingresado manualmente (> 0)
+  const tienePrecioUnidad = p.precioUnidad > 0;
+  const tieneStockKilo = p.stockKilos !== null && p.stockKilos !== undefined;
+  const pesoUni = p.pesoUnidad || 0.4;
+  
+  // Mostrar info de peso
+  const pesoInfo = document.getElementById('pesoInfoCliente');
+  const textoPeso = document.getElementById('textoPesoInfo');
+  if (pesoInfo && textoPeso) {
+    const precioAprox = calcularPrecioAproxUnidad(p.precioKilo, pesoUni);
+    pesoInfo.style.display = 'block';
+  }
+  
+  let html = '';
+  
+  // Construir opciones de modo de compra
+  const opcionesModo = [];
+  
+  // Opción por kilo (siempre si tiene precio por kilo y stock)
+  if (tienePrecioKilo && tieneStockKilo) {
+    opcionesModo.push({
+      modo: 'kilo',
+      clase: 'active',
+      html: `⚖️ Por kilo ${formatearCLP(p.precioKilo)}/kg`
+    });
+  }
+  
+  // Opción por unidad SOLO SI el admin ingresó precio manualmente
+  if (tienePrecioUnidad) {
+    opcionesModo.push({
+      modo: 'unidad',
+      clase: opcionesModo.length === 0 ? 'active' : '',
+      html: `📦 Por unidad ${formatearCLP(p.precioUnidad)}/u`
+    });
+  }
+  
+  // Opción por unidad estimada (solo si NO hay precio unidad manual)
+  if (tienePrecioKilo && !tienePrecioUnidad) {
+    opcionesModo.push({
+      modo: 'unidad_estimada',
+      clase: opcionesModo.length === 0 ? 'active' : '',
+      html: `🥬 Por unidad (≈${formatearCLP(calcularPrecioAproxUnidad(p.precioKilo, pesoUni))})`
+    });
+  }
+  
+  // Solo mostrar selector de modo si hay más de una opción
+  if (opcionesModo.length > 1) {
+    html += `<div class="option-group">
+      <label>Modo de compra</label>
+      <div>
+        ${opcionesModo.map(opt => 
+          `<button type="button" class="option-btn ${opt.clase}" data-modo="${opt.modo}" onclick="selectModo('${opt.modo}')">${opt.html}</button>`
+        ).join('')}
+      </div>
+    </div>`;
+  } else if (opcionesModo.length === 1) {
+    // Si solo hay una opción, mostrarla como info (no como botón seleccionable)
+    html += `<div class="option-group">
+      <label>Modo de compra</label>
+      <div style="padding: 10px; background: #f5f5f5; border-radius: 10px; font-weight: 600; color: var(--primary);">
+        ${opcionesModo[0].html}
+      </div>
+      <input type="hidden" id="modoUnico" value="${opcionesModo[0].modo}">
+    </div>`;
+  }
+  
+  html += `<div>
+    <label>Cantidad</label>
+    <input id="varCantidad" type="number" min="0.1" step="0.1" value="1" style="width: 100%; padding: 12px; border: 2px solid var(--accent-yellow); border-radius: 10px; font-size: 1.1rem; text-align: center;" oninput="actualizarPreviewVariante()">
+  </div>`;
+  
+  document.getElementById('varOptions').innerHTML = html;
+  
+  // Mostrar preview inicial
+  setTimeout(actualizarPreviewVariante, 100);
+  
+  abrirModal('modalVariantes');
+};
 
-    window.selectModo = (modo) => {
-      document.querySelectorAll('#varOptions .option-btn').forEach(b => b.classList.remove('active'));
-      document.querySelector(`[data-modo="${modo}"]`)?.classList.add('active');
+window.selectModo = (modo) => {
+  // Si hay modo único (input hidden), no hacer nada
+  if (document.getElementById('modoUnico')) return;
+  
+  document.querySelectorAll('#varOptions .option-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`[data-modo="${modo}"]`)?.classList.add('active');
+  
+  // ... resto de la función igual
       
       const input = document.getElementById('varCantidad');
       if (!input) return;
@@ -1725,7 +1772,8 @@
       if (!p) return;
       
       const modoBtn = document.querySelector('#varOptions .option-btn.active');
-      const modo = modoBtn?.dataset.modo || 'kilo';
+const modoUnico = document.getElementById('modoUnico');
+const modo = modoBtn?.dataset.modo || modoUnico?.value || 'kilo';
       
       let precioUnitario = 0;
       let total = 0;
@@ -2122,10 +2170,11 @@
               <h3>${p.nombre || 'Sin nombre'}</h3>
               ${p.desc ? `<div class="card-desc">${p.desc}</div>` : ''}
               <div class="precio-tag">
-                ${p.precioKilo > 0 ? `${formatearCLP(p.precioKilo)}/kg ` : ''}
-                ${p.precioUnidad > 0 ? `${formatearCLP(p.precioUnidad)}/u` : ''}
-              </div>
-              ${precioAprox ? `<div class="precio-aprox">≈ ${formatearCLP(precioAprox)} por unidad (${pesoUni}kg)</div>` : ''}
+  ${p.precioKilo > 0 ? `${formatearCLP(p.precioKilo)}/kg ` : ''}
+  ${p.precioUnidad > 0 ? `${formatearCLP(p.precioUnidad)}/u` : ''}
+</div>
+${(precioAprox && !p.precioUnidad) ? `<div class="precio-aprox">≈ ${formatearCLP(precioAprox)} por unidad (${pesoUni}kg)</div>` : ''}
+
               <button class="btn-add" ${sinStock || modoEliminar ? 'disabled' : ''} onclick="event.stopPropagation(); abrirVariantes('${p.id}')">
                 ${modoEliminar ? 'TOCA PARA ELIMINAR' : sinStock ? 'AGOTADO' : 'AGREGAR 🛒'}
               </button>
@@ -2144,17 +2193,8 @@
       
       renderLote(0);
     }
-function copiarPrecio() {
-    const precioKg = parseFloat(document.getElementById('pPreKg')?.value) || 0;
-    const pesoUni = parseFloat(document.getElementById('pPesoUni')?.value) || 0.4;
-    
-    if (precioKg > 0 && pesoUni > 0) {
-        const precioUnidad = Math.round(precioKg * pesoUni);
-        document.getElementById("pPreUni").value = precioUnidad;
-    }
-}
 
-setInterval(copiarPrecio, 100);
+
     function renderGaleria() {
       const cont = document.getElementById('galeriaSuperior');
       if (!cont) return;
