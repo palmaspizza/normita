@@ -703,86 +703,7 @@
       font-weight: 800;
       color: var(--primary);
     }
-  /* Botón Crear Nuevo Producto - Estilo Verde Brillante */
-.btn-nuevo-producto {
-  width: 100%;
-  padding: 14px 20px;
-  background: linear-gradient(135deg, #00c853 0%, #00e676 50%, #00c853 100%);
-  background-size: 200% 200%;
-  color: white;
-  border: none;
-  border-radius: 12px;
-  font-weight: 800;
-  font-size: 1rem;
-  cursor: pointer;
-  margin-top: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  box-shadow: 0 4px 15px rgba(0, 200, 83, 0.4), 
-              inset 0 1px 0 rgba(255,255,255,0.3);
-  position: relative;
-  overflow: hidden;
-  transition: all 0.3s ease;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-/* Icono del botón */
-.btn-nuevo-producto::before {
-  content: '✨';
-  font-size: 1.3rem;
-  filter: drop-shadow(0 0 4px rgba(255,255,255,0.8));
-}
-
-/* Efecto de brillo animado */
-.btn-nuevo-producto::after {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: linear-gradient(
-    45deg,
-    transparent 30%,
-    rgba(255,255,255,0.4) 50%,
-    transparent 70%
-  );
-  transform: translateX(-100%) rotate(45deg);
-  animation: brillo 3s infinite;
-  pointer-events: none;
-}
-
-@keyframes brillo {
-  0%, 100% { transform: translateX(-100%) rotate(45deg); }
-  50%, 100% { transform: translateX(100%) rotate(45deg); }
-}
-
-/* Hover effects */
-.btn-nuevo-producto:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 200, 83, 0.6),
-              0 0 30px rgba(0, 230, 118, 0.4),
-              inset 0 1px 0 rgba(255,255,255,0.4);
-  background-position: 100% 0;
-}
-
-.btn-nuevo-producto:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 10px rgba(0, 200, 83, 0.4);
-}
-
-/* Pulso sutil en el icono */
-@keyframes pulso-icono {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.2); }
-}
-
-.btn-nuevo-producto:hover::before {
-  animation: pulso-icono 0.6s ease infinite;
-}</style>
+  </style>
 </head>
 <body>
   <!-- Modal Foto Ampliada -->
@@ -893,9 +814,7 @@
         <button class="btn-add" style="background: #ff6b6b; color: white; margin-top: 15px; box-shadow: brown 4px 4px 4px;" onclick="activarModoEliminarDesdeModal();desactivarModoEliminar()">
           <span style="background-color: rgb(255, 0, 0); padding: 5px; border-radius: 5px; border: 2px solid white;">🗑️</span> EDITAR O ELIMINAR PRODUCTOS <span style=" border: 2px solid white; background-color: #00c853; padding: 5px; border-radius: 5px;">✏️</span>
         </button>
-      <br><br><button class="btn-nuevo-producto" onclick="nuevoProducto()">
-  Crear Nuevo Producto
-</button></div>
+      </div>
       <div class="modal-body">
         <input type="hidden" id="pId">
         <div class="form-grid">
@@ -976,11 +895,7 @@
             <textarea id="pDesc" rows="2" placeholder="Descripción ..."></textarea>
           </div>
         </div>
-        <script>window.nuevoProducto = () => {
-  limpiarFormulario();
-  document.getElementById('modalProdTitle').textContent = '🥦 Nuevo Producto';
-  // Mantener el modal abierto con el formulario limpio
-};
+        <script>
           function recargarPagina() {
   location.reload();
 }
@@ -1173,9 +1088,8 @@
       const stockGranel = tieneStockGranel ? p.stockGranel : 0;
       const stockAproxUnidades = Math.floor(stockKilos / pesoUni);
       
-     if (pesoTexto) {
-  let txt = `Peso por unidad: <strong>${pesoUni}kg</strong>`;
-  // Ya no muestra precio calculado automáticamente
+      if (pesoTexto) {
+        let txt = `Cada unidad pesa aprox. <strong>${pesoUni}kg</strong>`;
         if (tieneStockKilo && tieneStockGranel) {
           txt += ` | Stock: ${stockKilos}kg / ${stockGranel}u`;
         } else if (tieneStockKilo) {
@@ -1186,11 +1100,13 @@
         pesoTexto.innerHTML = txt;
       }
       
-// Solo mostrar precios que fueron ingresados manualmente
-precios.innerHTML = `
-  ${p.precioKilo > 0 ? `<span class="price-tag price-kilo">${formatearCLP(p.precioKilo)}/kg</span>` : ''}
-  ${p.precioUnidad > 0 ? `<span class="price-tag price-unit">${formatearCLP(p.precioUnidad)}/u</span>` : ''}
-`;
+      const precioAprox = calcularPrecioAproxUnidad(p.precioKilo, pesoUni);
+      
+      precios.innerHTML = `
+        ${p.precioKilo > 0 ? `<span class="price-tag price-kilo">${formatearCLP(p.precioKilo)}/kg</span>` : ''}
+        ${p.precioUnidad > 0 ? `<span class="price-tag price-unit">${formatearCLP(p.precioUnidad)}/u</span>` : ''}
+        ${(p.precioKilo > 0 && !p.precioUnidad) ? `<span class="price-tag" style="background: var(--accent-yellow); color: var(--primary);">≈ ${formatearCLP(precioAprox)}/u</span>` : ''}
+      `;
       
       let sinStock = false;
       if (tieneStockKilo && tieneStockGranel) {
@@ -1257,15 +1173,24 @@ precios.innerHTML = `
     };
 
     // ========== ACTUALIZAR PREVIEW DE PRECIO EN FORMULARIO ==========
-  // ========== ACTUALIZAR PREVIEW DE PRECIO EN FORMULARIO ==========
-function actualizarPreviewPrecio() {
-  // Ya no calcula precio por unidad automáticamente
-  // El precio por unidad debe ingresarse manualmente o dejarse vacío
-  const preview = document.getElementById('precioCalcPreview');
-  if (preview) {
-    preview.style.display = 'none';
-  }
-}
+    function actualizarPreviewPrecio() {
+      const precioKg = parseFloat(document.getElementById('pPreKg')?.value) || 0;
+      const pesoUni = parseFloat(document.getElementById('pPesoUni')?.value) || 0.4;
+      const preview = document.getElementById('precioCalcPreview');
+      const valor = document.getElementById('precioAproxCalculado');
+      const pesoMostrado = document.getElementById('pesoMostrado');
+      const precioKgMostrado = document.getElementById('precioKgMostrado');
+      
+      if (precioKg > 0 && pesoUni > 0) {
+        const precioAprox = calcularPrecioAproxUnidad(precioKg, pesoUni);
+        valor.textContent = formatearCLP(precioAprox);
+        pesoMostrado.textContent = pesoUni;
+        precioKgMostrado.textContent = precioKg;
+        preview.style.display = 'block';
+      } else {
+        preview.style.display = 'none';
+      }
+    }
 
     // ========== MANEJO DE FOTOS ==========
     window.handleFotoSeleccionada = (input) => {
@@ -1724,62 +1649,105 @@ function actualizarPreviewPrecio() {
 
     // ========== CARRITO ==========
     window.abrirVariantes = (id) => {
-      if (modoEliminar) {
-        borrarDB(id);
-        return;
-      }
-      
-      const p = productos.find(x => x.id === id);
-      if (!p) return;
-      
-      document.getElementById('varProdId').value = id;
-      document.getElementById('varTitle').innerText = p.nombre;
-      
-      const tienePrecioKilo = p.precioKilo > 0;
-      const tienePrecioUnidad = p.precioUnidad > 0;
-      const tieneStockKilo = p.stockKilos !== null && p.stockKilos !== undefined;
-      const pesoUni = p.pesoUnidad || 0.4;
-      
-      // Mostrar info de peso
-      const pesoInfo = document.getElementById('pesoInfoCliente');
-      const textoPeso = document.getElementById('textoPesoInfo');
-      if (pesoInfo && textoPeso) {
-        const precioAprox = calcularPrecioAproxUnidad(p.precioKilo, pesoUni);
-         pesoInfo.style.display = 'block';
-      }
-      
-      let html = '';
-// Solo mostrar modo de compra si hay precio por kilo O precio por unidad EXPLÍCITO (manual)
-// Solo mostrar modo de compra si hay precio por kilo O precio por unidad EXPLÍCITO (manual)
-const tienePrecioUnidadManual = p.precioUnidad > 0;
-
-if (tienePrecioKilo || tienePrecioUnidadManual) {
-  html += `<div class="option-group">
-    <label>Modo de compra</label>
-    <div>
-      ${(tienePrecioKilo && tieneStockKilo) ? `<button type="button" class="option-btn ${!tienePrecioUnidadManual ? 'active' : ''}" data-modo="kilo" onclick="selectModo('kilo')">⚖️ Por kilo ${formatearCLP(p.precioKilo)}/kg</button>` : ''}
-      ${tienePrecioUnidadManual ? `<button type="button" class="option-btn ${(!tienePrecioKilo || !tieneStockKilo) ? 'active' : ''}" data-modo="unidad" onclick="selectModo('unidad')">📦 Por unidad ${formatearCLP(p.precioUnidad)}/u</button>` : ''}
-    </div>
+  if (modoEliminar) {
+    borrarDB(id);
+    return;
+  }
+  
+  const p = productos.find(x => x.id === id);
+  if (!p) return;
+  
+  document.getElementById('varProdId').value = id;
+  document.getElementById('varTitle').innerText = p.nombre;
+  
+  const tienePrecioKilo = p.precioKilo > 0;
+  // IMPORTANTE: Solo considerar precio unidad si fue ingresado manualmente (> 0)
+  const tienePrecioUnidad = p.precioUnidad > 0;
+  const tieneStockKilo = p.stockKilos !== null && p.stockKilos !== undefined;
+  const pesoUni = p.pesoUnidad || 0.4;
+  
+  // Mostrar info de peso
+  const pesoInfo = document.getElementById('pesoInfoCliente');
+  const textoPeso = document.getElementById('textoPesoInfo');
+  if (pesoInfo && textoPeso) {
+    const precioAprox = calcularPrecioAproxUnidad(p.precioKilo, pesoUni);
+    pesoInfo.style.display = 'block';
+  }
+  
+  let html = '';
+  
+  // Construir opciones de modo de compra
+  const opcionesModo = [];
+  
+  // Opción por kilo (siempre si tiene precio por kilo y stock)
+  if (tienePrecioKilo && tieneStockKilo) {
+    opcionesModo.push({
+      modo: 'kilo',
+      clase: 'active',
+      html: `⚖️ Por kilo ${formatearCLP(p.precioKilo)}/kg`
+    });
+  }
+  
+  // Opción por unidad SOLO SI el admin ingresó precio manualmente
+  if (tienePrecioUnidad) {
+    opcionesModo.push({
+      modo: 'unidad',
+      clase: opcionesModo.length === 0 ? 'active' : '',
+      html: `📦 Por unidad ${formatearCLP(p.precioUnidad)}/u`
+    });
+  }
+  
+  // Opción por unidad estimada (solo si NO hay precio unidad manual)
+  if (tienePrecioKilo && !tienePrecioUnidad) {
+    opcionesModo.push({
+      modo: 'unidad_estimada',
+      clase: opcionesModo.length === 0 ? 'active' : '',
+      html: `🥬 Por unidad (≈${formatearCLP(calcularPrecioAproxUnidad(p.precioKilo, pesoUni))})`
+    });
+  }
+  
+  // Solo mostrar selector de modo si hay más de una opción
+  if (opcionesModo.length > 1) {
+    html += `<div class="option-group">
+      <label>Modo de compra</label>
+      <div>
+        ${opcionesModo.map(opt => 
+          `<button type="button" class="option-btn ${opt.clase}" data-modo="${opt.modo}" onclick="selectModo('${opt.modo}')">${opt.html}</button>`
+        ).join('')}
+      </div>
+    </div>`;
+  } else if (opcionesModo.length === 1) {
+    // Si solo hay una opción, mostrarla como info (no como botón seleccionable)
+    html += `<div class="option-group">
+      <label>Modo de compra</label>
+      <div style="padding: 10px; background: #f5f5f5; border-radius: 10px; font-weight: 600; color: var(--primary);">
+        ${opcionesModo[0].html}
+      </div>
+      <input type="hidden" id="modoUnico" value="${opcionesModo[0].modo}">
+    </div>`;
+  }
+  
+  html += `<div>
+    <label>Cantidad</label>
+    <input id="varCantidad" type="number" min="0.1" step="0.1" value="1" style="width: 100%; padding: 12px; border: 2px solid var(--accent-yellow); border-radius: 10px; font-size: 1.1rem; text-align: center;" oninput="actualizarPreviewVariante()">
   </div>`;
-}
-}
-      
-      html += `<div>
-        <label>Cantidad</label>
-        <input id="varCantidad" type="number" min="0.1" step="0.1" value="1" style="width: 100%; padding: 12px; border: 2px solid var(--accent-yellow); border-radius: 10px; font-size: 1.1rem; text-align: center;" oninput="actualizarPreviewVariante()">
-      </div>`;
-      
-      document.getElementById('varOptions').innerHTML = html;
-      
-      // Mostrar preview inicial
-      setTimeout(actualizarPreviewVariante, 100);
-      
-      abrirModal('modalVariantes');
-    };
+  
+  document.getElementById('varOptions').innerHTML = html;
+  
+  // Mostrar preview inicial
+  setTimeout(actualizarPreviewVariante, 100);
+  
+  abrirModal('modalVariantes');
+};
 
-    window.selectModo = (modo) => {
-      document.querySelectorAll('#varOptions .option-btn').forEach(b => b.classList.remove('active'));
-      document.querySelector(`[data-modo="${modo}"]`)?.classList.add('active');
+window.selectModo = (modo) => {
+  // Si hay modo único (input hidden), no hacer nada
+  if (document.getElementById('modoUnico')) return;
+  
+  document.querySelectorAll('#varOptions .option-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`[data-modo="${modo}"]`)?.classList.add('active');
+  
+  // ... resto de la función igual
       
       const input = document.getElementById('varCantidad');
       if (!input) return;
@@ -1804,7 +1772,8 @@ if (tienePrecioKilo || tienePrecioUnidadManual) {
       if (!p) return;
       
       const modoBtn = document.querySelector('#varOptions .option-btn.active');
-      const modo = modoBtn?.dataset.modo || 'kilo';
+const modoUnico = document.getElementById('modoUnico');
+const modo = modoBtn?.dataset.modo || modoUnico?.value || 'kilo';
       
       let precioUnitario = 0;
       let total = 0;
@@ -2029,7 +1998,7 @@ if (tienePrecioKilo || tienePrecioUnidadManual) {
       actualizarCarritoUI();
       cerrarModal('modalCarrito');
       
-      window.open(`https://wa.me/56954998792?text=${encodeURIComponent(msg)}`, '_blank');
+      window.open(`https://wa.me/56968658582?text=${encodeURIComponent(msg)}`, '_blank');
     };
 
     // ========== RENDER ==========
@@ -2176,9 +2145,9 @@ if (tienePrecioKilo || tienePrecioUnidadManual) {
             `<div style="position: absolute; inset: 0; background: rgba(255,23,68,0.2); z-index: 5; display: flex; align-items: center; justify-content: center; pointer-events: none;">
               <span style="background: var(--danger); color: white; padding: 10px 20px; border-radius: 10px; font-weight: 700; font-size: 1.2rem;">🗑️ TOCAR PARA ELIMINAR</span>
             </div>` : '';
-        // NO calcular precio aproximado automáticamente
-// El precio por unidad solo aparece si se ingresó manualmente
-const tienePrecioUnidadManual = p.precioUnidad > 0;
+          
+          // Calcular precio aproximado por unidad si solo tiene precio por kilo
+          const precioAprox = (!p.precioUnidad && p.precioKilo) ? calcularPrecioAproxUnidad(p.precioKilo, pesoUni) : null;
           
           card.innerHTML = `
             ${eliminarOverlay}
@@ -2200,10 +2169,12 @@ const tienePrecioUnidadManual = p.precioUnidad > 0;
               </span>
               <h3>${p.nombre || 'Sin nombre'}</h3>
               ${p.desc ? `<div class="card-desc">${p.desc}</div>` : ''}
-           <div class="precio-tag">
+              <div class="precio-tag">
   ${p.precioKilo > 0 ? `${formatearCLP(p.precioKilo)}/kg ` : ''}
   ${p.precioUnidad > 0 ? `${formatearCLP(p.precioUnidad)}/u` : ''}
 </div>
+${(precioAprox && !p.precioUnidad) ? `<div class="precio-aprox">≈ ${formatearCLP(precioAprox)} por unidad (${pesoUni}kg)</div>` : ''}
+
               <button class="btn-add" ${sinStock || modoEliminar ? 'disabled' : ''} onclick="event.stopPropagation(); abrirVariantes('${p.id}')">
                 ${modoEliminar ? 'TOCA PARA ELIMINAR' : sinStock ? 'AGOTADO' : 'AGREGAR 🛒'}
               </button>
@@ -2222,6 +2193,7 @@ const tienePrecioUnidadManual = p.precioUnidad > 0;
       
       renderLote(0);
     }
+
 
     function renderGaleria() {
       const cont = document.getElementById('galeriaSuperior');
